@@ -15,6 +15,7 @@ import { useGame } from '@/contexts/GameContext';
 import { useTimer, useGameStats } from '@/hooks';
 import { DIFFICULTIES } from '@/lib/minesweeper';
 import GameBoard from '../game/GameBoard';
+import PlaceBombButton from '../game/PlaceBombButton';
 import ColorReference from './ColorReference';
 
 export default function GameDemo() {
@@ -22,6 +23,7 @@ export default function GameDemo() {
     state,
     resetGame,
     changeDifficulty,
+    toggleBombPlacementMode,
   } = useGame();
 
   const { formattedTime, isRunning, isPaused, pause, resume } = useTimer();
@@ -125,9 +127,31 @@ export default function GameDemo() {
         </div>
       </div>
 
+      {/* Mobile-Friendly Bomb Placement Button */}
+      <div className="flex justify-center mb-4 md:hidden">
+        <PlaceBombButton 
+          isBombPlacementMode={state.isBombPlacementMode}
+          onToggle={toggleBombPlacementMode}
+          disabled={isFinished}
+          size="md"
+        />
+      </div>
+
       {/* Game Board */}
       <div className="flex justify-center mb-6">
-        <GameBoard cellSize="md" />
+        <div className="flex flex-col items-center gap-4">
+          <GameBoard cellSize="md" />
+          
+          {/* Desktop Bomb Placement Button - shown below board */}
+          <div className="hidden md:block">
+            <PlaceBombButton 
+              isBombPlacementMode={state.isBombPlacementMode}
+              onToggle={toggleBombPlacementMode}
+              disabled={isFinished}
+              size="sm"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Game Status Messages */}
@@ -150,6 +174,7 @@ export default function GameDemo() {
         <ul className="text-sm text-gray-600 space-y-1">
           <li>• <strong>Left click</strong> to reveal a cell</li>
           <li>• <strong>Right click</strong> to flag/unflag a cell</li>
+          <li>• On mobile: Use the <strong>"Place Bombs"</strong> button to switch modes</li>
           <li>• Numbers show how many mines are adjacent to that cell</li>
           <li>• Flag all mines without revealing them to win!</li>
           <li>• Timer starts on your first move</li>

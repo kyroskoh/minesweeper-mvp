@@ -19,6 +19,7 @@ interface MinesweeperCellProps {
   onRightClick: (e: React.MouseEvent) => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
+  isBombPlacementMode?: boolean;
 }
 
 export default function MinesweeperCell({
@@ -27,6 +28,7 @@ export default function MinesweeperCell({
   onRightClick,
   disabled = false,
   size = 'md',
+  isBombPlacementMode = false,
 }: MinesweeperCellProps) {
   
   // Classic Minesweeper number colors
@@ -59,6 +61,17 @@ export default function MinesweeperCell({
     return '';
   };
 
+  // Handle cell click based on mode
+  const handleClick = () => {
+    if (isBombPlacementMode && !disabled && cell.state !== CellState.REVEALED) {
+      // In bomb placement mode, clicking should toggle flag
+      onRightClick({ preventDefault: () => {}, stopPropagation: () => {} } as React.MouseEvent);
+    } else if (!isBombPlacementMode) {
+      // In normal mode, clicking should reveal
+      onClick();
+    }
+  };
+
   // Get cell styling classes
   const getCellClasses = (): string => {
     const sizeClasses = {
@@ -68,6 +81,11 @@ export default function MinesweeperCell({
     };
 
     let classes = `${sizeClasses[size]} border border-gray-400 flex items-center justify-center font-bold cursor-pointer select-none transition-all duration-150 `;
+    
+    // Add visual indicator for bomb placement mode
+    if (isBombPlacementMode && cell.state === CellState.HIDDEN && !disabled) {
+      classes += 'ring-2 ring-orange-300 ring-opacity-50 ';
+    }
     
     if (disabled) {
       classes += 'cursor-not-allowed ';
@@ -103,9 +121,10 @@ export default function MinesweeperCell({
   return (
     <button
       className={getCellClasses()}
-      onClick={onClick}
+      onClick={handleClick}
       onContextMenu={onRightClick}
       disabled={disabled}
+      title={isBombPlacementMode && cell.state !== CellState.REVEALED ? 'Tap to flag/unflag' : undefined}
       style={{
         // Add subtle 3D effect for unrevealed cells
         boxShadow: cell.state === CellState.HIDDEN && !disabled

@@ -6,6 +6,7 @@ export interface GameContextState {
   currentTime: number;
   isLoading: boolean;
   error: string | null;
+  isBombPlacementMode: boolean;
 }
 
 export type GameAction =
@@ -19,7 +20,8 @@ export type GameAction =
   | { type: 'SET_LOADING'; payload: { loading: boolean } }
   | { type: 'SET_ERROR'; payload: { error: string | null } }
   | { type: 'PAUSE_GAME' }
-  | { type: 'RESUME_GAME' };
+  | { type: 'RESUME_GAME' }
+  | { type: 'TOGGLE_BOMB_PLACEMENT_MODE' };
 
 export interface GameContextValue {
   // State
@@ -32,6 +34,7 @@ export interface GameContextValue {
   resetGame: (difficulty?: Difficulty, seed?: number) => void;
   pauseGame: () => void;
   resumeGame: () => void;
+  toggleBombPlacementMode: () => void;
   
   // Getters
   getFormattedTime: () => string;

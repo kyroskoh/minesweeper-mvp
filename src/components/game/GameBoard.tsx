@@ -13,6 +13,7 @@ interface GameBoardProps {
 export default function GameBoard({ cellSize = 'md', className = '' }: GameBoardProps) {
   const { state, revealCell, toggleFlag } = useGame();
   const { isFinished } = useGameStats();
+  const { isBombPlacementMode } = state;
 
   if (!state.gameState?.board || !state.gameState?.difficulty) {
     return (
@@ -63,6 +64,7 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
               onRightClick={(e) => handleCellRightClick(e, x, y)}
               disabled={isFinished}
               size={cellSize}
+              isBombPlacementMode={isBombPlacementMode}
             />
           ))
         )}

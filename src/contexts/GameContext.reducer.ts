@@ -7,6 +7,7 @@ export const initialGameState: GameContextState = {
   currentTime: 0,
   isLoading: false,
   error: null,
+  isBombPlacementMode: false,
 };
 
 export function gameReducer(state: GameContextState, action: GameAction): GameContextState {
@@ -220,6 +221,13 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           error: error instanceof Error ? error.message : 'Failed to resume game',
         };
       }
+    }
+
+    case 'TOGGLE_BOMB_PLACEMENT_MODE': {
+      return {
+        ...state,
+        isBombPlacementMode: !state.isBombPlacementMode,
+      };
     }
 
     default:

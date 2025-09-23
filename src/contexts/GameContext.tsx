@@ -106,6 +106,10 @@ export function GameProvider({
     dispatch({ type: 'RESUME_GAME' });
   }, []);
 
+  const toggleBombPlacementMode = useCallback(() => {
+    dispatch({ type: 'TOGGLE_BOMB_PLACEMENT_MODE' });
+  }, []);
+
   const changeDifficulty = useCallback((difficulty: Difficulty) => {
     localStorageManager.saveDifficulty(difficulty.name.toUpperCase() as DifficultyKey);
     resetGame(difficulty);
@@ -144,6 +148,7 @@ export function GameProvider({
     resetGame,
     pauseGame,
     resumeGame,
+    toggleBombPlacementMode,
     getFormattedTime,
     getRemainingMines,
     isGameFinished,
