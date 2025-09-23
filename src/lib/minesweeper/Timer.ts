@@ -1,3 +1,13 @@
+/**
+ * Minesweeper MVP - Precision Timer System
+ * 
+ * Advanced timing functionality with millisecond accuracy,
+ * pause/resume capabilities, and multiple formatting options.
+ * 
+ * @author Kyros Koh
+ * @version 1.0.0
+ * @created 2025-09-23
+ */
 export class Timer {
   private startTime: number | null = null;
   private endTime: number | null = null;

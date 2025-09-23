@@ -1,3 +1,13 @@
+/**
+ * Minesweeper MVP - Core Game Logic
+ * 
+ * Main game class that orchestrates board state, timer functionality,
+ * and game flow management with comprehensive state tracking.
+ * 
+ * @author Kyros Koh
+ * @version 1.0.0
+ * @created 2025-09-23
+ */
 import { Board } from './Board';
 import { Timer } from './Timer';
 import { GameState, GameStatus, Difficulty, Position } from './types';

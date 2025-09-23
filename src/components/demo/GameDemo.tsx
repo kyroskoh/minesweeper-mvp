@@ -1,3 +1,13 @@
+/**
+ * Minesweeper MVP - Game Demo Component
+ * 
+ * A comprehensive demo showcasing the complete Minesweeper game
+ * with enhanced UI, timing system, and classic number colors.
+ * 
+ * @author Kyros Koh
+ * @version 1.0.0
+ * @created 2025-09-23
+ */
 'use client';
 
 import React from 'react';
@@ -28,8 +38,13 @@ export default function GameDemo() {
   return (
     <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
       <div className="text-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-800 mb-2">Minesweeper MVP</h1>
-        <p className="text-gray-600">Game Engine & Context Demo</p>
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">
+          🎯 Minesweeper MVP
+        </h1>
+        <p className="text-gray-600 mb-1">Minesweeper Game Engine</p>
+        <p className="text-sm text-gray-500">
+          by <span className="font-medium text-gray-700">Kyros Koh</span>
+        </p>
       </div>
 
       {/* Game Stats Header */}
@@ -152,6 +167,24 @@ export default function GameDemo() {
           </p>
         </div>
       )}
+
+      {/* Author Credit */}
+      <div className="mt-8 pt-6 border-t border-gray-200 text-center">
+        <p className="text-sm text-gray-500">
+          Created with ❤️ by{' '}
+          <a 
+            href="https://github.com/kyros-koh" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            Kyros Koh
+          </a>
+        </p>
+        <p className="text-xs text-gray-400 mt-1">
+          Minesweeper MVP v1.0.0 • Built with Next.js, TypeScript & Tailwind CSS
+        </p>
+      </div>
     </div>
   );
 }

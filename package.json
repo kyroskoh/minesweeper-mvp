@@ -1,6 +1,26 @@
 {
   "name": "minesweeper-mvp",
   "version": "0.1.0",
+  "description": "A modern, fully-featured Minesweeper game built with Next.js, TypeScript, and Tailwind CSS. Features match time tracking, persistent game states, and classic color-coded numbers.",
+  "author": {
+    "name": "Kyros Koh",
+    "email": "me@kyroskoh.com"
+  },
+  "keywords": [
+    "minesweeper",
+    "game",
+    "nextjs",
+    "typescript",
+    "tailwindcss",
+    "react",
+    "timer",
+    "puzzle"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kyroskoh/minesweeper-mvp.git"
+  },
+  "license": "MIT",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack",

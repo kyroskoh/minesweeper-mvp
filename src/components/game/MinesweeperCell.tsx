@@ -1,3 +1,13 @@
+/**
+ * Minesweeper MVP - Enhanced Cell Component
+ * 
+ * Individual cell component with classic Minesweeper styling,
+ * color-coded numbers, and 3D visual effects.
+ * 
+ * @author Kyros Koh
+ * @version 1.0.0
+ * @created 2025-09-23
+ */
 'use client';
 
 import React from 'react';

@@ -1,3 +1,13 @@
+/**
+ * Minesweeper MVP - React Game Context
+ * 
+ * Central state management using React Context and useReducer pattern.
+ * Handles game state, persistence, and real-time timer updates.
+ * 
+ * @author Kyros Koh
+ * @version 1.0.0
+ * @created 2025-09-23
+ */
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';

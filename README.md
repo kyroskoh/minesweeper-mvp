@@ -1,5 +1,7 @@
 # 🎯 Minesweeper MVP
 
+> **Created by [Kyros Koh](https://github.com/kyroskoh)**
+
 A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and Tailwind CSS. Features include match time tracking, persistent game states, and a classic color-coded number system.
 
 ## ✨ Features
@@ -212,12 +214,22 @@ npm test GameContext        # React context tests
 
 MIT License - see LICENSE file for details.
 
+## 👨‍💻 Author
+
+**Kyros Koh**
+- GitHub: [@kyros-koh](https://github.com/kyros-koh)
+- Email: kyros.koh@example.com
+- Portfolio: [kyros-koh.dev](https://kyros-koh.dev)
+
 ## 🙏 Acknowledgments
 
 - Inspired by the classic Windows Minesweeper
 - Built with modern web technologies while preserving the classic gameplay
 - Special thanks to the Next.js and React communities
+- Created with passion for clean code and classic gaming experiences
 
 ---
 
 **Enjoy playing Minesweeper! 🎮💣**
+
+*Built with ❤️ by Kyros Koh*

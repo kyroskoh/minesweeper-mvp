@@ -1,3 +1,13 @@
+/**
+ * Minesweeper MVP - Board Logic Engine
+ * 
+ * Core board functionality including mine placement, flood-fill algorithm,
+ * neighbor calculation, and win/loss detection logic.
+ * 
+ * @author Kyros Koh
+ * @version 1.0.0
+ * @created 2025-09-23
+ */
 import { Cell, CellState, Difficulty, Position } from './types';
 
 export class Board {
