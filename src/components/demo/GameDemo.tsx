@@ -15,7 +15,7 @@ import { useGame } from '@/contexts/GameContext';
 import { useTimer, useGameStats } from '@/hooks';
 import { DIFFICULTIES } from '@/lib/minesweeper';
 import GameBoard from '../game/GameBoard';
-import PlaceFlagButton from '../game/PlaceFlagButton';
+import ClientOnlyPlaceFlagButton from '../game/ClientOnlyPlaceFlagButton';
 import ColorReference from './ColorReference';
 
 export default function GameDemo() {
@@ -129,7 +129,7 @@ export default function GameDemo() {
 
       {/* Mobile-Friendly Flag Placement Button */}
       <div className="flex justify-center mb-4 md:hidden">
-        <PlaceFlagButton 
+        <ClientOnlyPlaceFlagButton 
           isBombPlacementMode={state.isBombPlacementMode}
           onToggle={toggleBombPlacementMode}
           disabled={isFinished}
@@ -144,7 +144,7 @@ export default function GameDemo() {
           
           {/* Desktop Flag Placement Button - shown below board */}
           <div className="hidden md:block">
-            <PlaceFlagButton 
+            <ClientOnlyPlaceFlagButton 
               isBombPlacementMode={state.isBombPlacementMode}
               onToggle={toggleBombPlacementMode}
               disabled={isFinished}

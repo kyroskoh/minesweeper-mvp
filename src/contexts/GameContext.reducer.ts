@@ -25,6 +25,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           currentTime: 0,
           error: null,
           isLoading: false,
+          // Preserve isBombPlacementMode during game initialization
         };
       } catch (error) {
         return {
@@ -103,6 +104,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           gameState,
           currentTime: 0,
           error: null,
+          // Preserve isBombPlacementMode during game reset
         };
       }
 
@@ -117,6 +119,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           gameState,
           currentTime: 0,
           error: null,
+          // Preserve isBombPlacementMode during game reset
         };
       } catch (error) {
         return {
@@ -147,6 +150,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           currentTime,
           error: null,
           isLoading: false,
+          // Preserve isBombPlacementMode when loading saved game
         };
       } catch (error) {
         return {
