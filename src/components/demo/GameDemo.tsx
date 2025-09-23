@@ -1,0 +1,157 @@
+'use client';
+
+import React from 'react';
+import { useGame } from '@/contexts/GameContext';
+import { useTimer, useGameStats } from '@/hooks';
+import { DIFFICULTIES } from '@/lib/minesweeper';
+import GameBoard from '../game/GameBoard';
+import ColorReference from './ColorReference';
+
+export default function GameDemo() {
+  const {
+    state,
+    resetGame,
+    changeDifficulty,
+  } = useGame();
+
+  const { formattedTime, isRunning, isPaused, pause, resume } = useTimer();
+  const { remainingMines, flagsUsed, isFinished, isWon, isLost, difficulty } = useGameStats();
+
+  if (!state.gameState || !state.gameState.board) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-lg">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-2">Minesweeper MVP</h1>
+        <p className="text-gray-600">Game Engine & Context Demo</p>
+      </div>
+
+      {/* Game Stats Header */}
+      <div className="flex justify-between items-center mb-6 p-4 bg-gray-100 rounded-lg">
+        <div className="flex space-x-6">
+          <div className="text-center">
+            <div className="text-2xl font-mono font-bold text-blue-600">{formattedTime}</div>
+            <div className="text-xs text-gray-500">Time</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-mono font-bold text-red-600">{remainingMines}</div>
+            <div className="text-xs text-gray-500">Mines Left</div>
+          </div>
+          <div className="text-center">
+            <div className="text-2xl font-mono font-bold text-yellow-600">{flagsUsed}</div>
+            <div className="text-xs text-gray-500">Flags Used</div>
+          </div>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <div className={`px-3 py-1 rounded text-sm font-medium ${
+            isWon ? 'bg-green-100 text-green-800' :
+            isLost ? 'bg-red-100 text-red-800' :
+            isRunning ? 'bg-blue-100 text-blue-800' :
+            'bg-gray-100 text-gray-800'
+          }`}>
+            {isWon ? '😄 Won!' : 
+             isLost ? '😵 Lost!' : 
+             isRunning ? '⏱️ Running' : 
+             '⏸️ Ready'}
+          </div>
+        </div>
+      </div>
+
+      {/* Game Controls */}
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex space-x-2">
+          <button
+            onClick={() => resetGame()}
+            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            New Game
+          </button>
+          
+          {isPaused && (
+            <button
+              onClick={resume}
+              className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
+            >
+              Resume
+            </button>
+          )}
+          
+          {isRunning && (
+            <button
+              onClick={pause}
+              className="px-4 py-2 bg-yellow-500 text-white rounded hover:bg-yellow-600 transition-colors"
+            >
+              Pause
+            </button>
+          )}
+        </div>
+        
+        <div className="flex space-x-2">
+          {Object.entries(DIFFICULTIES).map(([key, diff]) => (
+            <button
+              key={key}
+              onClick={() => changeDifficulty(diff)}
+              className={`px-3 py-1 text-sm rounded transition-colors ${
+                difficulty?.name === diff.name
+                  ? 'bg-purple-500 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {diff.name}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Game Board */}
+      <div className="flex justify-center mb-6">
+        <GameBoard cellSize="md" />
+      </div>
+
+      {/* Game Status Messages */}
+      {isFinished && (
+        <div className="text-center mb-4">
+          <div className={`inline-block px-6 py-3 rounded-lg text-lg font-semibold ${
+            isWon ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+          }`}>
+            {isWon ? 
+              `🎉 Congratulations! You won in ${formattedTime}!` : 
+              '💥 Game Over! Better luck next time!'
+            }
+          </div>
+        </div>
+      )}
+
+      {/* Instructions */}
+      <div className="mt-8 p-4 bg-gray-50 rounded-lg">
+        <h3 className="font-semibold text-gray-800 mb-2">How to Play:</h3>
+        <ul className="text-sm text-gray-600 space-y-1">
+          <li>• <strong>Left click</strong> to reveal a cell</li>
+          <li>• <strong>Right click</strong> to flag/unflag a cell</li>
+          <li>• Numbers show how many mines are adjacent to that cell</li>
+          <li>• Flag all mines without revealing them to win!</li>
+          <li>• Timer starts on your first move</li>
+        </ul>
+      </div>
+
+      {/* Color Reference */}
+      <ColorReference />
+
+      {/* Debug Info */}
+      {state.error && (
+        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-700 text-sm">
+            <strong>Error:</strong> {state.error}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
