@@ -57,7 +57,7 @@ export default function PlaceFlagButton({
   };
 
   const getIcon = () => {
-    return isBombPlacementMode ? '💣' : '🔍';
+    return isBombPlacementMode ? '🚩' : '🔍';
   };
 
   const getLabel = () => {
@@ -81,7 +81,7 @@ export default function PlaceFlagButton({
         role="switch"
         aria-checked={isBombPlacementMode}
       >
-        <span className="text-xl" role="img" aria-label={isBombPlacementMode ? 'bomb' : 'magnifying glass'}>
+        <span className="text-xl" role="img" aria-label={isBombPlacementMode ? 'flag' : 'magnifying glass'}>
           {getIcon()}
         </span>
         <span className="font-bold">

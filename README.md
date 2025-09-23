@@ -210,7 +210,7 @@ npm test GameContext        # React context tests
 The game includes a dedicated "Place Flags" button for mobile users who cannot right-click:
 
 - **Reveal Mode** (🔍): Default mode - tap cells to reveal them
-- **Place Flags Mode** (💣): Toggle mode - tap cells to flag/unflag them
+- **Place Flags Mode** (🚩): Toggle mode - tap cells to flag/unflag them
 - **Visual Indicators**: Cells show orange ring highlights in flag placement mode
 - **Responsive Design**: Button size and position optimized for different screen sizes
 
