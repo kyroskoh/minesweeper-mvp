@@ -38,6 +38,12 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
     }
   };
 
+  const handleFlagToggle = (x: number, y: number) => {
+    if (!isFinished) {
+      toggleFlag(x, y);
+    }
+  };
+
   return (
     <div className={`inline-block ${className}`}>
       <div 
@@ -62,6 +68,7 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
               cell={cell}
               onClick={() => handleCellClick(x, y)}
               onRightClick={(e) => handleCellRightClick(e, x, y)}
+              onFlagToggle={() => handleFlagToggle(x, y)}
               disabled={isFinished}
               size={cellSize}
               isBombPlacementMode={isBombPlacementMode}

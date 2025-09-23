@@ -15,7 +15,7 @@ import { useGame } from '@/contexts/GameContext';
 import { useTimer, useGameStats } from '@/hooks';
 import { DIFFICULTIES } from '@/lib/minesweeper';
 import GameBoard from '../game/GameBoard';
-import PlaceBombButton from '../game/PlaceBombButton';
+import PlaceFlagButton from '../game/PlaceFlagButton';
 import ColorReference from './ColorReference';
 
 export default function GameDemo() {
@@ -127,9 +127,9 @@ export default function GameDemo() {
         </div>
       </div>
 
-      {/* Mobile-Friendly Bomb Placement Button */}
+      {/* Mobile-Friendly Flag Placement Button */}
       <div className="flex justify-center mb-4 md:hidden">
-        <PlaceBombButton 
+        <PlaceFlagButton 
           isBombPlacementMode={state.isBombPlacementMode}
           onToggle={toggleBombPlacementMode}
           disabled={isFinished}
@@ -142,9 +142,9 @@ export default function GameDemo() {
         <div className="flex flex-col items-center gap-4">
           <GameBoard cellSize="md" />
           
-          {/* Desktop Bomb Placement Button - shown below board */}
+          {/* Desktop Flag Placement Button - shown below board */}
           <div className="hidden md:block">
-            <PlaceBombButton 
+            <PlaceFlagButton 
               isBombPlacementMode={state.isBombPlacementMode}
               onToggle={toggleBombPlacementMode}
               disabled={isFinished}
@@ -174,7 +174,7 @@ export default function GameDemo() {
         <ul className="text-sm text-gray-600 space-y-1">
           <li>• <strong>Left click</strong> to reveal a cell</li>
           <li>• <strong>Right click</strong> to flag/unflag a cell</li>
-          <li>• On mobile: Use the <strong>"Place Bombs"</strong> button to switch modes</li>
+          <li>• On mobile: Use the <strong>"Place Flags"</strong> button to switch modes</li>
           <li>• Numbers show how many mines are adjacent to that cell</li>
           <li>• Flag all mines without revealing them to win!</li>
           <li>• Timer starts on your first move</li>

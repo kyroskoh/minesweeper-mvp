@@ -17,6 +17,7 @@ interface MinesweeperCellProps {
   cell: Cell;
   onClick: () => void;
   onRightClick: (e: React.MouseEvent) => void;
+  onFlagToggle?: () => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
   isBombPlacementMode?: boolean;
@@ -26,6 +27,7 @@ export default function MinesweeperCell({
   cell,
   onClick,
   onRightClick,
+  onFlagToggle,
   disabled = false,
   size = 'md',
   isBombPlacementMode = false,
@@ -64,8 +66,10 @@ export default function MinesweeperCell({
   // Handle cell click based on mode
   const handleClick = () => {
     if (isBombPlacementMode && !disabled && cell.state !== CellState.REVEALED) {
-      // In bomb placement mode, clicking should toggle flag
-      onRightClick({ preventDefault: () => {}, stopPropagation: () => {} } as React.MouseEvent);
+      // In flag placement mode, clicking should toggle flag
+      if (onFlagToggle) {
+        onFlagToggle();
+      }
     } else if (!isBombPlacementMode) {
       // In normal mode, clicking should reveal
       onClick();

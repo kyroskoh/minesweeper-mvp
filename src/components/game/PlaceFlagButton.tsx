@@ -1,8 +1,8 @@
 /**
- * Minesweeper MVP - Place Bomb Button Component
+ * Minesweeper MVP - Place Flag Button Component
  * 
  * Mobile-friendly toggle button that allows smartphone/tablet users
- * to switch between reveal mode and bomb placement mode.
+ * to switch between reveal mode and flag placement mode.
  * 
  * @author Kyros Koh
  * @version 1.0.0
@@ -12,19 +12,19 @@
 
 import React from 'react';
 
-interface PlaceBombButtonProps {
+interface PlaceFlagButtonProps {
   isBombPlacementMode: boolean;
   onToggle: () => void;
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
 }
 
-export default function PlaceBombButton({
+export default function PlaceFlagButton({
   isBombPlacementMode,
   onToggle,
   disabled = false,
   size = 'md',
-}: PlaceBombButtonProps) {
+}: PlaceFlagButtonProps) {
   const getSizeClasses = () => {
     const sizeMap = {
       sm: 'px-3 py-2 text-sm min-h-[40px]',
@@ -61,12 +61,12 @@ export default function PlaceBombButton({
   };
 
   const getLabel = () => {
-    return isBombPlacementMode ? 'Place Bombs' : 'Reveal Cells';
+    return isBombPlacementMode ? 'Place Flags' : 'Reveal Cells';
   };
 
   const getHelpText = () => {
     return isBombPlacementMode 
-      ? 'Tap cells to flag/unflag bombs'
+      ? 'Tap cells to place/remove flags'
       : 'Tap cells to reveal them';
   };
 
@@ -77,7 +77,7 @@ export default function PlaceBombButton({
         onClick={onToggle}
         disabled={disabled}
         type="button"
-        aria-label={`Switch to ${isBombPlacementMode ? 'reveal' : 'bomb placement'} mode`}
+      aria-label={`Switch to ${isBombPlacementMode ? 'reveal' : 'flag placement'} mode`}
         role="switch"
         aria-checked={isBombPlacementMode}
       >
@@ -96,7 +96,7 @@ export default function PlaceBombButton({
       
       {/* Mode indicator for accessibility */}
       <div className="sr-only" role="status" aria-live="polite">
-        Current mode: {isBombPlacementMode ? 'Bomb placement' : 'Cell reveal'}
+        Current mode: {isBombPlacementMode ? 'Flag placement' : 'Cell reveal'}
       </div>
     </div>
   );

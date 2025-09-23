@@ -8,6 +8,7 @@ A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and
 
 ### 🎮 Core Gameplay
 - **Classic Minesweeper Mechanics**: Left-click to reveal, right-click to flag
+- **Mobile-Friendly Controls**: "Place Flags" toggle button for smartphones/tablets
 - **Three Difficulty Levels**: Beginner (9×9, 10 mines), Intermediate (16×16, 40 mines), Expert (30×16, 99 mines)
 - **Smart Mine Placement**: Uses seeded random generation for consistent testing
 - **Flood Fill Algorithm**: Auto-reveals connected empty cells
@@ -23,14 +24,16 @@ A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and
 - **Classic Color Scheme**: Traditional Minesweeper number colors (1=Blue, 2=Green, 3=Red, etc.)
 - **3D Cell Effects**: Realistic button appearance with inset shadows
 - **Responsive Design**: Works on desktop and mobile devices
+- **Mobile Touch Controls**: Dedicated bomb placement mode with visual indicators
 - **Real-time Updates**: Live mine counter and timer display
-- **Visual Feedback**: Hover effects and smooth transitions
+- **Visual Feedback**: Hover effects, smooth transitions, and mode-specific styling
 
 ### 💾 State Management
 - **Auto-save**: Game automatically saves to localStorage
 - **Resume Functionality**: Pick up exactly where you left off
 - **Difficulty Persistence**: Remembers your preferred difficulty level
 - **Context-based Architecture**: Clean separation of game logic and UI
+- **Mobile State Tracking**: Persistent bomb placement mode for touch devices
 
 ## 🚀 Getting Started
 
@@ -179,9 +182,10 @@ src/
 - **Persistence**: Automatic localStorage integration with error handling
 
 #### UI Components (`src/components/`)
-- **MinesweeperCell**: Enhanced cell component with classic styling
+- **MinesweeperCell**: Enhanced cell component with classic styling and mobile mode support
 - **GameBoard**: Responsive game board with proper event handling
-- **Demo Components**: Full-featured game interface
+- **PlaceFlagButton**: Mobile-friendly toggle button with accessibility features
+- **Demo Components**: Full-featured game interface with responsive mobile controls
 
 ## 🧪 Testing
 
@@ -200,11 +204,27 @@ npm test Timer.test.ts      # Timing system tests
 npm test GameContext        # React context tests
 ```
 
+## 📱 Mobile Controls
+
+### Touch-Friendly Interface
+The game includes a dedicated "Place Flags" button for mobile users who cannot right-click:
+
+- **Reveal Mode** (🔍): Default mode - tap cells to reveal them
+- **Place Flags Mode** (💣): Toggle mode - tap cells to flag/unflag them
+- **Visual Indicators**: Cells show orange ring highlights in flag placement mode
+- **Responsive Design**: Button size and position optimized for different screen sizes
+
+### Mobile Usage
+1. **Tap the toggle button** to switch between reveal and flag placement modes
+2. **In Reveal Mode**: Tap cells to reveal them (normal gameplay)
+3. **In Flag Placement Mode**: Tap cells to place/remove flags
+4. **Visual Feedback**: Active mode is clearly indicated with colors and icons
+
 ## 🎯 Game Rules
 
 ### How to Play
-1. **Left-click** any cell to reveal it
-2. **Right-click** to flag/unflag suspected mines
+1. **Left-click** any cell to reveal it (or tap in reveal mode on mobile)
+2. **Right-click** to flag/unflag suspected mines (or use flag placement mode on mobile)
 3. **Numbers** show how many mines are adjacent to that cell
 4. **Objective**: Reveal all non-mine cells without clicking on any mines
 5. **Timer** starts on your first move
@@ -243,13 +263,14 @@ npm test GameContext        # React context tests
 ## 🚧 Upcoming Features
 
 ### High Priority
+- [x] **Mobile Controls**: Touch-friendly bomb placement toggle (COMPLETED)
 - [ ] **Leaderboard System**: Top 10 high scores with SQLite backend
 - [ ] **API Routes**: RESTful endpoints for score management
 - [ ] **Database Migration**: Scripts for localStorage → SQLite → SQL/NoSQL
 
 ### Medium Priority
 - [ ] **Animations**: D3.js cell reveal effects, Three.js win celebrations
-- [ ] **Mobile Enhancements**: Touch controls, long-press flagging
+- [ ] **Enhanced Mobile Features**: Long-press support, gesture recognition
 - [ ] **PWA Features**: Offline play, install prompts
 - [ ] **Dark Mode**: Theme switching with Tailwind
 
