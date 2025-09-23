@@ -52,7 +52,48 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to play the game.
+Open [http://localhost:3001](http://localhost:3001) to play the game.
+
+### 🐳 Docker Setup
+
+The application includes comprehensive Docker support for both development and production environments.
+
+#### Quick Start with Docker
+
+```bash
+# Production environment
+npm run docker:prod
+
+# Development environment with hot reload
+npm run docker:dev
+
+# Stop containers
+npm run docker:stop
+```
+
+#### Manual Docker Commands
+
+```bash
+# Build production image
+docker build -t minesweeper-mvp .
+
+# Run production container
+docker run -p 3001:3001 minesweeper-mvp
+
+# Using Docker Compose for production
+docker-compose up --build -d
+
+# Using Docker Compose for development
+docker-compose -f docker-compose.dev.yml up --build
+```
+
+#### Docker Features
+- **Multi-stage builds** for optimized production images
+- **Health checks** for container monitoring
+- **Non-root user** for security
+- **Volume mounts** for persistent data
+- **Development mode** with hot reload
+- **Optimized caching** for faster builds
 
 ### Available Scripts
 
@@ -69,6 +110,14 @@ npm run test:coverage # Generate coverage report
 
 # Code Quality
 npm run lint        # Run ESLint
+
+# Docker
+npm run docker:build # Build production Docker image
+npm run docker:run   # Run production container
+npm run docker:dev   # Start development environment
+npm run docker:prod  # Start production environment
+npm run docker:stop  # Stop all containers
+npm run docker:clean # Clean up Docker resources
 ```
 
 ## 🏗️ Architecture
@@ -217,9 +266,9 @@ MIT License - see LICENSE file for details.
 ## 👨‍💻 Author
 
 **Kyros Koh**
-- GitHub: [@kyros-koh](https://github.com/kyros-koh)
-- Email: kyros.koh@example.com
-- Portfolio: [kyros-koh.dev](https://kyros-koh.dev)
+- GitHub: [@kyroskoh](https://github.com/kyroskoh)
+- Email: me@kyroskoh.com
+- Portfolio: [kyroskoh.com](https://kyroskoh.com)
 
 ## 🙏 Acknowledgments
 

@@ -1,0 +1,35 @@
+# Minesweeper MVP - Development Docker Compose
+# Author: Kyros Koh
+
+version: '3.8'
+
+services:
+  # Development service with hot reload
+  minesweeper-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: minesweeper-mvp-dev
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=development
+      - PORT=3001
+      - NEXT_TELEMETRY_DISABLED=1
+      - WATCHPACK_POLLING=true
+    volumes:
+      # Mount source code for hot reload
+      - .:/app
+      - /app/node_modules
+      - /app/.next
+    restart: unless-stopped
+    networks:
+      - minesweeper-dev-network
+    labels:
+      - "app=minesweeper-mvp"
+      - "env=development"
+      - "author=kyros-koh"
+
+networks:
+  minesweeper-dev-network:
+    driver: bridge

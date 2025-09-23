@@ -1,0 +1,41 @@
+# Minesweeper MVP - Development Docker Configuration
+# Optimized for development with hot reload
+# Author: Kyros Koh
+
+FROM node:24-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install dependencies for better compatibility
+RUN apk add --no-cache libc6-compat
+
+# Copy package files
+COPY package.json package-lock.json* ./
+
+# Install all dependencies (including dev dependencies)
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV PORT=3001
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Create non-root user
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Change ownership of the app directory
+RUN chown -R nextjs:nodejs /app
+
+# Switch to non-root user
+USER nextjs
+
+# Expose port
+EXPOSE 3001
+
+# Start development server with hot reload
+CMD ["npm", "run", "dev"]

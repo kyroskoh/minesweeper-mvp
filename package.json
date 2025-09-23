@@ -23,13 +23,19 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --port 3001",
     "build": "next build --turbopack",
-    "start": "next start",
+    "start": "next start --port 3001",
     "lint": "eslint",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "docker:build": "docker build -t minesweeper-mvp .",
+    "docker:run": "docker run -p 3001:3001 minesweeper-mvp",
+    "docker:dev": "docker-compose -f docker-compose.dev.yml up --build",
+    "docker:prod": "docker-compose up --build",
+    "docker:stop": "docker-compose down",
+    "docker:clean": "docker system prune -f && docker volume prune -f"
   },
   "dependencies": {
     "@types/three": "^0.180.0",
