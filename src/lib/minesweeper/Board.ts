@@ -45,7 +45,6 @@ export class Board {
     // Use seed for deterministic testing
     const random = seed ? this.seededRandom(seed) : Math.random;
     
-    let minesPlaced = 0;
     const positions: Position[] = [];
     
     // Generate all possible positions
@@ -65,7 +64,6 @@ export class Board {
     for (let i = 0; i < this.mineCount && i < positions.length; i++) {
       const { x, y } = positions[i];
       this.cells[y][x].isMine = true;
-      minesPlaced++;
     }
   }
 

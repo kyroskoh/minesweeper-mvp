@@ -11,7 +11,7 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
-import { DIFFICULTIES } from '@/lib/minesweeper';
+import { DIFFICULTIES, Difficulty, DifficultyKey } from '@/lib/minesweeper';
 import { localStorageManager, STORAGE_KEYS } from '@/lib/storage/localStorage';
 import { gameReducer, initialGameState } from './GameContext.reducer';
 import { GameContextValue, GameProviderProps } from './GameContext.types';
@@ -82,20 +82,18 @@ export function GameProvider({
   }, []);
 
   const revealCell = useCallback((x: number, y: number) => {
-    const positions = state.game?.reveal(x, y) || [];
     dispatch({ type: 'REVEAL_CELL', payload: { x, y } });
-    return positions;
+    return state.game?.reveal(x, y) || [];
   }, [state.game]);
 
   const toggleFlag = useCallback((x: number, y: number) => {
-    const success = state.game?.toggleFlag(x, y) || false;
     dispatch({ type: 'TOGGLE_FLAG', payload: { x, y } });
-    return success;
+    return state.game?.toggleFlag(x, y) || false;
   }, [state.game]);
 
-  const resetGame = useCallback((difficulty?: any, seed?: number) => {
+  const resetGame = useCallback((difficulty?: Difficulty, seed?: number) => {
     if (difficulty) {
-      localStorageManager.saveDifficulty(difficulty.name.toUpperCase());
+      localStorageManager.saveDifficulty(difficulty.name.toUpperCase() as DifficultyKey);
     }
     dispatch({ type: 'RESET_GAME', payload: { difficulty, seed } });
   }, []);
@@ -108,8 +106,8 @@ export function GameProvider({
     dispatch({ type: 'RESUME_GAME' });
   }, []);
 
-  const changeDifficulty = useCallback((difficulty: any) => {
-    localStorageManager.saveDifficulty(difficulty.name.toUpperCase());
+  const changeDifficulty = useCallback((difficulty: Difficulty) => {
+    localStorageManager.saveDifficulty(difficulty.name.toUpperCase() as DifficultyKey);
     resetGame(difficulty);
   }, [resetGame]);
 

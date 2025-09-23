@@ -24,7 +24,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack --port 3001",
-    "build": "next build --turbopack",
+    "build": "next build",
     "start": "next start --port 3001",
     "lint": "eslint",
     "test": "jest",
@@ -41,6 +41,7 @@
     "@types/three": "^0.180.0",
     "@types/uuid": "^10.0.0",
     "better-sqlite3": "^12.4.1",
+    "critters": "^0.0.23",
     "d3": "^7.9.0",
     "next": "15.5.3",
     "react": "19.1.0",
