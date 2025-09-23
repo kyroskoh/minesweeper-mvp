@@ -95,7 +95,7 @@ LICENSE
 .eslintrc*
 .prettierrc*
 jest.config*
-tsconfig.json
+# tsconfig.json - KEEP THIS for TypeScript compilation and path mapping
 
 # Temporary files
 tmp/

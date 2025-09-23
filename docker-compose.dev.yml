@@ -1,8 +1,6 @@
 # Minesweeper MVP - Development Docker Compose
 # Author: Kyros Koh
 
-version: '3.8'
-
 services:
   # Development service with hot reload
   minesweeper-dev:

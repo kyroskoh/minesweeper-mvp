@@ -1,8 +1,6 @@
 # Minesweeper MVP - Docker Compose Configuration
 # Author: Kyros Koh
 
-version: '3.8'
-
 services:
   # Main application service
   minesweeper-app:
