@@ -292,6 +292,29 @@ npm run build
 - **"Cannot find module 'critters'"**: Fixed by installing the `critters` dependency
 - **Experimental features causing build failures**: The `optimizeCss` experimental feature has been disabled for stability
 - **TypeScript compilation errors**: Ensure all imports are correctly typed and files exist
+- **Docker build fails with "Cannot find module '@/...'"**: The `.dockerignore` file was excluding `tsconfig.json`, preventing TypeScript path mapping resolution in Docker builds. Fixed by allowing `tsconfig.json` in Docker context.
+
+### Docker Issues
+
+If Docker builds fail with module resolution errors:
+
+```bash
+# Ensure these files are NOT excluded in .dockerignore:
+# tsconfig.json       # Required for TypeScript path mapping
+# next.config.ts      # Required for Next.js configuration
+# src/                # Required for source code
+
+# Rebuild without cache if needed
+docker build --no-cache -t minesweeper-mvp .
+
+# Check if container runs properly
+docker run -p 3001:3001 minesweeper-mvp
+```
+
+**Path Mapping Requirements:**
+- `tsconfig.json` must include `"@/*": ["./src/*"]` in paths
+- `next.config.ts` must include webpack alias configuration
+- Both files must be available in the Docker build context
 
 ## 📄 License
 
