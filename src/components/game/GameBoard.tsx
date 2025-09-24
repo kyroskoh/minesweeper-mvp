@@ -11,7 +11,7 @@ interface GameBoardProps {
 }
 
 export default function GameBoard({ cellSize = 'md', className = '' }: GameBoardProps) {
-  const { state, revealCell, toggleFlag } = useGame();
+  const { state, revealCell, toggleFlag, resumeGame } = useGame();
   const { isFinished } = useGameStats();
   const { isBombPlacementMode } = state;
 
@@ -27,6 +27,10 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
 
   const handleCellClick = (x: number, y: number) => {
     if (!isFinished) {
+      // Resume the game if it's paused
+      if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
+        resumeGame();
+      }
       revealCell(x, y);
     }
   };
@@ -34,16 +38,23 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
   const handleCellRightClick = (e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault();
     if (!isFinished) {
+      // Resume the game if it's paused
+      if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
+        resumeGame();
+      }
       toggleFlag(x, y);
     }
   };
 
   const handleFlagToggle = (x: number, y: number) => {
     if (!isFinished) {
+      // Resume the game if it's paused
+      if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
+        resumeGame();
+      }
       toggleFlag(x, y);
     }
   };
-
   return (
     <div className={`inline-block ${className}`}>
       <div 
