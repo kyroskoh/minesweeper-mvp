@@ -16,6 +16,8 @@ import { useTimer, useGameStats } from '@/hooks';
 import { DIFFICULTIES } from '@/lib/minesweeper';
 import GameBoard from '../game/GameBoard';
 import ClientOnlyPlaceFlagButton from '../game/ClientOnlyPlaceFlagButton';
+import HighScoreButton from '../game/HighScoreButton';
+import HighScoreModal from '../game/HighScoreModal';
 import ColorReference from './ColorReference';
 
 export default function GameDemo() {
@@ -24,6 +26,7 @@ export default function GameDemo() {
     resetGame,
     changeDifficulty,
     toggleBombPlacementMode,
+    toggleHighScores,
   } = useGame();
 
   const { formattedTime, isRunning, isPaused, pause, resume } = useTimer();
@@ -108,6 +111,8 @@ export default function GameDemo() {
               Pause
             </button>
           )}
+          
+          <HighScoreButton className="px-4 py-2" />
         </div>
         
         <div className="flex space-x-2">
@@ -178,6 +183,7 @@ export default function GameDemo() {
           <li>• Numbers show how many mines are adjacent to that cell</li>
           <li>• Flag all mines without revealing them to win!</li>
           <li>• Timer starts on your first move</li>
+          <li>• Try to get on the <strong>high score</strong> leaderboard!</li>
         </ul>
       </div>
 
@@ -191,6 +197,11 @@ export default function GameDemo() {
             <strong>Error:</strong> {state.error}
           </p>
         </div>
+      )}
+
+      {/* High Score Modal */}
+      {state.showHighScores && (
+        <HighScoreModal onClose={toggleHighScores} />
       )}
 
       {/* Author Credit */}

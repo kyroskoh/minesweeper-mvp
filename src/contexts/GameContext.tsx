@@ -11,8 +11,9 @@
 'use client';
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useRef } from 'react';
-import { DIFFICULTIES, Difficulty, DifficultyKey } from '@/lib/minesweeper';
+import { DIFFICULTIES, Difficulty, DifficultyKey, Score } from '@/lib/minesweeper';
 import { localStorageManager, STORAGE_KEYS } from '@/lib/storage/localStorage';
+import { highScoreManager } from '@/lib/scores/HighScoreManager';
 import { gameReducer, initialGameState } from './GameContext.reducer';
 import { GameContextValue, GameProviderProps } from './GameContext.types';
 
@@ -53,6 +54,20 @@ export function GameProvider({
       localStorageManager.saveGameState(storageKey, state.gameState);
     }
   }, [state.gameState, autoSave, storageKey]);
+
+  // Check for high score when game is won
+  useEffect(() => {
+    if (state.game && state.gameState?.status === 'won') {
+      const difficulty = state.game.getDifficulty().name.toUpperCase() as DifficultyKey;
+      const time = state.game.getGameTime();
+      
+      // Check if this is a high score
+      const isHighScore = highScoreManager.isHighScore(time, difficulty);
+      if (isHighScore) {
+        dispatch({ type: 'SET_NEW_HIGH_SCORE', payload: { isNewHighScore: true } });
+      }
+    }
+  }, [state.gameState?.status]);
 
   // Timer update effect
   useEffect(() => {
@@ -115,6 +130,42 @@ export function GameProvider({
     resetGame(difficulty);
   }, [resetGame]);
 
+  // High Score Actions
+  const toggleHighScores = useCallback(() => {
+    dispatch({ type: 'TOGGLE_HIGH_SCORES' });
+  }, []);
+
+  const setPlayerName = useCallback((name: string) => {
+    dispatch({ type: 'SET_PLAYER_NAME', payload: { name } });
+  }, []);
+
+  const saveHighScore = useCallback(() => {
+    if (!state.game || !state.gameState || state.gameState.status !== 'won') {
+      return false;
+    }
+
+    const difficulty = state.game.getDifficulty().name.toUpperCase() as DifficultyKey;
+    const time = state.game.getGameTime();
+    const playerName = state.playerName.trim() || 'Anonymous';
+
+    const isHighScore = highScoreManager.addScore(playerName, time, difficulty);
+    
+    if (isHighScore) {
+      // Reset the high score flag after saving
+      dispatch({ type: 'SET_NEW_HIGH_SCORE', payload: { isNewHighScore: false } });
+    }
+    
+    return isHighScore;
+  }, [state.game, state.gameState, state.playerName]);
+
+  const getHighScores = useCallback((difficulty: DifficultyKey): Score[] => {
+    return highScoreManager.getScores(difficulty);
+  }, []);
+
+  const isHighScore = useCallback((time: number, difficulty: DifficultyKey): boolean => {
+    return highScoreManager.isHighScore(time, difficulty);
+  }, []);
+
   // Getters
   const getFormattedTime = useCallback(() => {
     return state.game?.getFormattedTime() || '00:00';
@@ -156,6 +207,11 @@ export function GameProvider({
     isGameLost,
     isFirstMove,
     changeDifficulty,
+    toggleHighScores,
+    setPlayerName,
+    saveHighScore,
+    getHighScores,
+    isHighScore,
   };
 
   return (

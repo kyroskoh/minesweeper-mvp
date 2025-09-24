@@ -1,4 +1,4 @@
-import { Game, GameState, Difficulty, Position, DifficultyKey } from '@/lib/minesweeper';
+import { Game, GameState, Difficulty, Position, DifficultyKey, Score } from '@/lib/minesweeper';
 
 export interface GameContextState {
   game: Game | null;
@@ -7,6 +7,9 @@ export interface GameContextState {
   isLoading: boolean;
   error: string | null;
   isBombPlacementMode: boolean;
+  showHighScores: boolean;
+  playerName: string;
+  isNewHighScore: boolean;
 }
 
 export type GameAction =
@@ -21,7 +24,11 @@ export type GameAction =
   | { type: 'SET_ERROR'; payload: { error: string | null } }
   | { type: 'PAUSE_GAME' }
   | { type: 'RESUME_GAME' }
-  | { type: 'TOGGLE_BOMB_PLACEMENT_MODE' };
+  | { type: 'TOGGLE_BOMB_PLACEMENT_MODE' }
+  | { type: 'TOGGLE_HIGH_SCORES' }
+  | { type: 'SET_PLAYER_NAME'; payload: { name: string } }
+  | { type: 'SAVE_HIGH_SCORE'; payload: { difficulty: DifficultyKey; time: number } }
+  | { type: 'SET_NEW_HIGH_SCORE'; payload: { isNewHighScore: boolean } };
 
 export interface GameContextValue {
   // State
@@ -46,6 +53,13 @@ export interface GameContextValue {
   
   // Settings
   changeDifficulty: (difficulty: Difficulty) => void;
+  
+  // High Scores
+  toggleHighScores: () => void;
+  setPlayerName: (name: string) => void;
+  saveHighScore: () => boolean;
+  getHighScores: (difficulty: DifficultyKey) => Score[];
+  isHighScore: (time: number, difficulty: DifficultyKey) => boolean;
 }
 
 export interface GameProviderProps {

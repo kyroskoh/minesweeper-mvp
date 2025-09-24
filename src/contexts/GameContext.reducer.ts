@@ -8,6 +8,9 @@ export const initialGameState: GameContextState = {
   isLoading: false,
   error: null,
   isBombPlacementMode: false,
+  showHighScores: false,
+  playerName: '',
+  isNewHighScore: false,
 };
 
 export function gameReducer(state: GameContextState, action: GameAction): GameContextState {
@@ -25,6 +28,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           currentTime: 0,
           error: null,
           isLoading: false,
+          isNewHighScore: false,
           // Preserve isBombPlacementMode during game initialization
         };
       } catch (error) {
@@ -104,6 +108,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           gameState,
           currentTime: 0,
           error: null,
+          isNewHighScore: false,
           // Preserve isBombPlacementMode during game reset
         };
       }
@@ -119,6 +124,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           gameState,
           currentTime: 0,
           error: null,
+          isNewHighScore: false,
           // Preserve isBombPlacementMode during game reset
         };
       } catch (error) {
@@ -150,6 +156,7 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           currentTime,
           error: null,
           isLoading: false,
+          isNewHighScore: false,
           // Preserve isBombPlacementMode when loading saved game
         };
       } catch (error) {
@@ -231,6 +238,29 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
       return {
         ...state,
         isBombPlacementMode: !state.isBombPlacementMode,
+      };
+    }
+
+    case 'TOGGLE_HIGH_SCORES': {
+      return {
+        ...state,
+        showHighScores: !state.showHighScores,
+      };
+    }
+
+    case 'SET_PLAYER_NAME': {
+      const { name } = action.payload;
+      return {
+        ...state,
+        playerName: name,
+      };
+    }
+
+    case 'SET_NEW_HIGH_SCORE': {
+      const { isNewHighScore } = action.payload;
+      return {
+        ...state,
+        isNewHighScore,
       };
     }
 
