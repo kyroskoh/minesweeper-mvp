@@ -1,9 +1,10 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useGame } from '@/contexts/GameContext';
 import { useGameStats } from '@/hooks';
 import MinesweeperCell from './MinesweeperCell';
+import { Position } from '@/lib/minesweeper';
 
 interface GameBoardProps {
   cellSize?: 'sm' | 'md' | 'lg';
@@ -12,8 +13,9 @@ interface GameBoardProps {
 
 export default function GameBoard({ cellSize = 'md', className = '' }: GameBoardProps) {
   const { state, revealCell, toggleFlag, resumeGame } = useGame();
-  const { isFinished } = useGameStats();
+  const { isFinished, isLost } = useGameStats();
   const { isBombPlacementMode } = state;
+  const [triggeredMine, setTriggeredMine] = useState<Position | null>(null);
 
   if (!state.gameState?.board || !state.gameState?.difficulty) {
     return (
@@ -25,36 +27,57 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
 
   const { board, difficulty } = state.gameState;
 
+  // Handle cell click based on current mode
   const handleCellClick = (x: number, y: number) => {
-    if (!isFinished) {
-      // Resume the game if it's paused
-      if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
-        resumeGame();
-      }
-      revealCell(x, y);
+    if (isFinished) return;
+    
+    // Resume the game if it's paused
+    if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
+      resumeGame();
     }
+    
+    // Check if we're in flag placement mode
+    if (isBombPlacementMode) {
+      // In flag mode, clicking should toggle flags
+      toggleFlag(x, y);
+      return;
+    }
+    
+    // In normal mode, clicking reveals cells
+    const cell = board[y][x];
+    if (cell.isMine && cell.state !== 'revealed') {
+      // If it's a mine, store its position as the triggered mine
+      setTriggeredMine({ x, y });
+    }
+    
+    revealCell(x, y);
   };
 
   const handleCellRightClick = (e: React.MouseEvent, x: number, y: number) => {
     e.preventDefault();
-    if (!isFinished) {
-      // Resume the game if it's paused
-      if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
-        resumeGame();
-      }
-      toggleFlag(x, y);
+    if (isFinished) return;
+    
+    // Resume the game if it's paused
+    if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
+      resumeGame();
     }
+    
+    // Right click always toggles flags, regardless of mode
+    toggleFlag(x, y);
   };
 
   const handleFlagToggle = (x: number, y: number) => {
-    if (!isFinished) {
-      // Resume the game if it's paused
-      if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
-        resumeGame();
-      }
-      toggleFlag(x, y);
+    if (isFinished) return;
+    
+    // Resume the game if it's paused
+    if (state.game && !state.game.isTimerRunning() && !state.game.isFinished()) {
+      resumeGame();
     }
+    
+    // This is called from long press or explicit flag toggle
+    toggleFlag(x, y);
   };
+
   return (
     <div className={`inline-block ${className}`}>
       <div 
@@ -83,6 +106,12 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
               disabled={isFinished}
               size={cellSize}
               isBombPlacementMode={isBombPlacementMode}
+              isTriggeredMine={
+                isLost && 
+                triggeredMine !== null && 
+                triggeredMine.x === x && 
+                triggeredMine.y === y
+              }
             />
           ))
         )}

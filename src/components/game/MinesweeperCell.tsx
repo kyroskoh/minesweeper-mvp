@@ -10,7 +10,7 @@
  */
 'use client';
 
-import React from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Cell, CellState } from '@/lib/minesweeper';
 
 interface MinesweeperCellProps {
@@ -21,7 +21,11 @@ interface MinesweeperCellProps {
   disabled?: boolean;
   size?: 'sm' | 'md' | 'lg';
   isBombPlacementMode?: boolean;
+  isTriggeredMine?: boolean;
 }
+
+// Long press duration in milliseconds
+const LONG_PRESS_DURATION = 500;
 
 export default function MinesweeperCell({
   cell,
@@ -31,7 +35,11 @@ export default function MinesweeperCell({
   disabled = false,
   size = 'md',
   isBombPlacementMode = false,
+  isTriggeredMine = false,
 }: MinesweeperCellProps) {
+  // State for long press
+  const [isLongPressing, setIsLongPressing] = useState(false);
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
   
   // Classic Minesweeper number colors
   const getNumberColor = (neighborMines: number): string => {
@@ -63,8 +71,35 @@ export default function MinesweeperCell({
     return '';
   };
 
+  // Start long press timer
+  const handleTouchStart = useCallback(() => {
+    if (disabled || cell.state === CellState.REVEALED) return;
+    
+    setIsLongPressing(true);
+    
+    longPressTimer.current = setTimeout(() => {
+      // Execute flag toggle on long press
+      if (onFlagToggle) {
+        onFlagToggle();
+      }
+      setIsLongPressing(false);
+    }, LONG_PRESS_DURATION);
+  }, [disabled, cell.state, onFlagToggle]);
+
+  // Cancel long press timer if touch ends
+  const handleTouchEnd = useCallback(() => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    setIsLongPressing(false);
+  }, []);
+
   // Handle cell click based on mode
   const handleClick = () => {
+    // Don't process click if we're in the middle of a long press
+    if (isLongPressing) return;
+    
     if (isBombPlacementMode && !disabled && cell.state !== CellState.REVEALED) {
       // In flag placement mode, clicking should toggle flag
       if (onFlagToggle) {
@@ -86,8 +121,8 @@ export default function MinesweeperCell({
 
     let classes = `${sizeClasses[size]} border border-gray-400 flex items-center justify-center font-bold cursor-pointer select-none transition-all duration-150 `;
     
-    // Add visual indicator for bomb placement mode
-    if (isBombPlacementMode && cell.state === CellState.HIDDEN && !disabled) {
+    // Add visual indicator for bomb placement mode or long press
+    if ((isBombPlacementMode || isLongPressing) && cell.state === CellState.HIDDEN && !disabled) {
       classes += 'ring-2 ring-orange-300 ring-opacity-50 ';
     }
     
@@ -97,8 +132,14 @@ export default function MinesweeperCell({
 
     if (cell.state === CellState.REVEALED) {
       if (cell.isMine) {
-        // Mine cell - red background
-        classes += 'bg-red-500 text-white border-red-600 ';
+        // Special highlighting for the mine that was clicked
+        if (isTriggeredMine) {
+          // Yellow background for the triggered mine
+          classes += 'bg-yellow-500 text-black border-yellow-600 ';
+        } else {
+          // Regular red background for other mines
+          classes += 'bg-red-500 text-white border-red-600 ';
+        }
       } else {
         // Revealed safe cell - light gray with number color
         const numberColor = cell.neighborMines > 0 ? getNumberColor(cell.neighborMines) : 'text-gray-600';
@@ -127,8 +168,18 @@ export default function MinesweeperCell({
       className={getCellClasses()}
       onClick={handleClick}
       onContextMenu={onRightClick}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchEnd}
+      onMouseDown={handleTouchStart}
+      onMouseUp={handleTouchEnd}
+      onMouseLeave={handleTouchEnd}
       disabled={disabled}
-      title={isBombPlacementMode && cell.state !== CellState.REVEALED ? 'Tap to flag/unflag' : undefined}
+      title={
+        isBombPlacementMode && cell.state !== CellState.REVEALED 
+          ? 'Tap to flag/unflag' 
+          : 'Long press to flag'
+      }
       style={{
         // Add subtle 3D effect for unrevealed cells
         boxShadow: cell.state === CellState.HIDDEN && !disabled

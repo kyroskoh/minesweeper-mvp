@@ -2,23 +2,32 @@
 
 > **Created by [Kyros Koh](https://github.com/kyroskoh)**
 
-A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and Tailwind CSS. Features include match time tracking, persistent game states, and a classic color-coded number system.
+A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and Tailwind CSS. Features include match time tracking, persistent game states, high scores, and a classic color-coded number system.
 
 ## ✨ Features
 
 ### 🎮 Core Gameplay
 - **Classic Minesweeper Mechanics**: Left-click to reveal, right-click to flag
 - **Mobile-Friendly Controls**: "Place Flags" toggle button for smartphones/tablets
+- **Long Press to Flag**: Hold down on a cell to quickly place a flag (mobile & desktop)
 - **Three Difficulty Levels**: Beginner (9×9, 10 mines), Intermediate (16×16, 40 mines), Expert (30×16, 99 mines)
 - **Smart Mine Placement**: Uses seeded random generation for consistent testing
 - **Flood Fill Algorithm**: Auto-reveals connected empty cells
 - **Win/Loss Detection**: Automatic game state management
+- **Highlighted Triggered Mine**: Yellow background shows which mine caused the game to end
+
+### 🏆 High Score System
+- **Top 10 Leaderboards**: Separate high score tables for each difficulty level
+- **Persistent Scores**: High scores saved to localStorage
+- **Player Names**: Enter your name when you achieve a high score
+- **Sorted Rankings**: Automatically sorts by fastest completion time
+- **Tabbed Interface**: Easy navigation between difficulty leaderboards
 
 ### ⏱️ Advanced Timing System
 - **Precise Match Timing**: Millisecond-accurate timer with pause/resume functionality
 - **Formatted Display**: Shows time in MM:SS format with detailed HH:MM:SS option
 - **Persistent Timing**: Timer state survives page refreshes
-- **Performance Tracking**: Ready for leaderboard integration
+- **Auto-Resume**: Timer automatically resumes when user interacts with paused game
 
 ### 🎨 Enhanced UI/UX
 - **Classic Color Scheme**: Traditional Minesweeper number colors (1=Blue, 2=Green, 3=Red, etc.)
@@ -149,6 +158,8 @@ src/
 ├── components/            # React components
 │   ├── demo/             # Demo components
 │   └── game/             # Core game UI components
+│       ├── HighScoreButton.tsx  # High score access button
+│       └── HighScoreModal.tsx   # High score display modal
 ├── contexts/             # React Context providers
 │   ├── GameContext.tsx   # Main game state management
 │   ├── GameContext.types.ts
@@ -161,6 +172,8 @@ src/
 │   │   ├── Game.ts       # Game state management
 │   │   ├── Timer.ts      # Precision timing system
 │   │   └── types.ts      # TypeScript definitions
+│   ├── scores/           # High score management
+│   │   └── HighScoreManager.ts # High score tracking system
 │   └── storage/          # Persistence layer
 │       └── localStorage.ts
 └── __tests__/            # Test suites
@@ -176,6 +189,10 @@ src/
 - **Timer.ts**: Precision timing with pause/resume and formatting utilities
 - **types.ts**: Comprehensive TypeScript definitions
 
+#### High Score System (`src/lib/scores/`)
+- **HighScoreManager.ts**: Manages top 10 scores for each difficulty level
+- **Score Interface**: Tracks player name, time, difficulty, and date
+
 #### React Layer (`src/contexts/`, `src/hooks/`)
 - **GameContext**: Central state management using useReducer pattern
 - **Custom Hooks**: Specialized hooks for timer and game statistics
@@ -185,6 +202,8 @@ src/
 - **MinesweeperCell**: Enhanced cell component with classic styling and mobile mode support
 - **GameBoard**: Responsive game board with proper event handling
 - **PlaceFlagButton**: Mobile-friendly toggle button with accessibility features
+- **HighScoreModal**: Tabbed interface for viewing high scores by difficulty
+- **HighScoreButton**: Button to access the high score leaderboard
 - **Demo Components**: Full-featured game interface with responsive mobile controls
 
 ## 🧪 Testing
@@ -207,10 +226,11 @@ npm test GameContext        # React context tests
 ## 📱 Mobile Controls
 
 ### Touch-Friendly Interface
-The game includes a dedicated "Place Flags" button for mobile users who cannot right-click:
+The game includes multiple ways to interact on mobile devices:
 
 - **Reveal Mode** (🔍): Default mode - tap cells to reveal them
 - **Place Flags Mode** (🚩): Toggle mode - tap cells to flag/unflag them
+- **Long Press**: Hold down on any cell for 500ms to place a flag, regardless of mode
 - **Visual Indicators**: Cells show orange ring highlights in flag placement mode
 - **Responsive Design**: Button size and position optimized for different screen sizes
 
@@ -218,16 +238,33 @@ The game includes a dedicated "Place Flags" button for mobile users who cannot r
 1. **Tap the toggle button** to switch between reveal and flag placement modes
 2. **In Reveal Mode**: Tap cells to reveal them (normal gameplay)
 3. **In Flag Placement Mode**: Tap cells to place/remove flags
-4. **Visual Feedback**: Active mode is clearly indicated with colors and icons
+4. **Long Press**: Hold on any cell to quickly place a flag without switching modes
+5. **Visual Feedback**: Active mode is clearly indicated with colors and icons
+
+## 🏆 High Score System
+
+### Features
+- **Separate Leaderboards**: Individual top 10 lists for Beginner, Intermediate, and Expert difficulties
+- **Persistent Storage**: High scores saved to localStorage
+- **Player Recognition**: Enter your name when achieving a high score
+- **Time-based Ranking**: Sorted by fastest completion time
+- **Date Tracking**: Records when each high score was achieved
+
+### How It Works
+1. Win a game to check if your time qualifies for the high score list
+2. If you achieve a high score, enter your name in the prompt
+3. View the high score lists anytime by clicking the "High Scores" button
+4. Navigate between difficulty levels using the tabs in the high score modal
 
 ## 🎯 Game Rules
 
 ### How to Play
 1. **Left-click** any cell to reveal it (or tap in reveal mode on mobile)
 2. **Right-click** to flag/unflag suspected mines (or use flag placement mode on mobile)
-3. **Numbers** show how many mines are adjacent to that cell
-4. **Objective**: Reveal all non-mine cells without clicking on any mines
-5. **Timer** starts on your first move
+3. **Long press** on any cell to quickly place a flag (mobile & desktop)
+4. **Numbers** show how many mines are adjacent to that cell
+5. **Objective**: Reveal all non-mine cells without clicking on any mines
+6. **Timer** starts on your first move and automatically resumes if paused
 
 ### Number Color System
 - **1**: Blue - Easiest to spot, usually safe areas
@@ -264,13 +301,15 @@ The game includes a dedicated "Place Flags" button for mobile users who cannot r
 
 ### High Priority
 - [x] **Mobile Controls**: Touch-friendly bomb placement toggle (COMPLETED)
-- [ ] **Leaderboard System**: Top 10 high scores with SQLite backend
+- [x] **High Score System**: Top 10 high scores for each difficulty level (COMPLETED)
+- [x] **Long Press to Flag**: Hold down on cells to quickly place flags (COMPLETED)
+- [x] **Triggered Mine Highlight**: Show which mine caused the game to end (COMPLETED)
 - [ ] **API Routes**: RESTful endpoints for score management
 - [ ] **Database Migration**: Scripts for localStorage → SQLite → SQL/NoSQL
 
 ### Medium Priority
 - [ ] **Animations**: D3.js cell reveal effects, Three.js win celebrations
-- [ ] **Enhanced Mobile Features**: Long-press support, gesture recognition
+- [ ] **Enhanced Mobile Features**: Gesture recognition
 - [ ] **PWA Features**: Offline play, install prompts
 - [ ] **Dark Mode**: Theme switching with Tailwind
 
