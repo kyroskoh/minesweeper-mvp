@@ -19,9 +19,10 @@ A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and
 ### 🏆 High Score System
 - **Top 10 Leaderboards**: Separate high score tables for each difficulty level
 - **Persistent Scores**: High scores saved to localStorage
-- **Player Names**: Enter your name when you achieve a high score
+- **Player Names**: Enter your name when you achieve a high score with automatic input focus
 - **Sorted Rankings**: Automatically sorts by fastest completion time
 - **Tabbed Interface**: Easy navigation between difficulty leaderboards
+- **Accessible Design**: High-contrast UI with proper color schemes for readability
 
 ### ⏱️ Advanced Timing System
 - **Precise Match Timing**: Millisecond-accurate timer with pause/resume functionality
@@ -202,7 +203,7 @@ src/
 - **MinesweeperCell**: Enhanced cell component with classic styling and mobile mode support
 - **GameBoard**: Responsive game board with proper event handling
 - **PlaceFlagButton**: Mobile-friendly toggle button with accessibility features
-- **HighScoreModal**: Tabbed interface for viewing high scores by difficulty
+- **HighScoreModal**: Tabbed interface for viewing high scores by difficulty with accessible design
 - **HighScoreButton**: Button to access the high score leaderboard
 - **Demo Components**: Full-featured game interface with responsive mobile controls
 
@@ -246,13 +247,14 @@ The game includes multiple ways to interact on mobile devices:
 ### Features
 - **Separate Leaderboards**: Individual top 10 lists for Beginner, Intermediate, and Expert difficulties
 - **Persistent Storage**: High scores saved to localStorage
-- **Player Recognition**: Enter your name when achieving a high score
+- **Player Recognition**: Enter your name when achieving a high score with automatic input focus
 - **Time-based Ranking**: Sorted by fastest completion time
 - **Date Tracking**: Records when each high score was achieved
+- **Accessible Design**: High-contrast colors and clear visual hierarchy for better readability
 
 ### How It Works
 1. Win a game to check if your time qualifies for the high score list
-2. If you achieve a high score, enter your name in the prompt
+2. If you achieve a high score, the input field automatically focuses for you to enter your name
 3. View the high score lists anytime by clicking the "High Scores" button
 4. Navigate between difficulty levels using the tabs in the high score modal
 

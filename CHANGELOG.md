@@ -2,6 +2,16 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.1] - 2025-09-24
+
+### Improved
+- **High Score UI**
+  - Improved color contrast for better readability in the high score modal
+  - Enhanced name input form with clearer visual hierarchy and better accessibility
+  - Added automatic focus on name input field when achieving a high score
+  - Updated UI to follow color best practices with amber/gold theme for high scores
+  - Fixed gray text on light background contrast issues in the high score table
+
 ## [1.1.0] - 2025-09-24
 
 ### Added
