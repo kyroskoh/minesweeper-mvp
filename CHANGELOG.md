@@ -2,6 +2,16 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.2] - 2025-09-24
+
+### Fixed
+- **High Score Name Submission**
+  - Fixed issue where player names weren't being properly saved when submitting high scores
+  - Added validation to prevent empty name submissions
+  - Improved the form submission process to properly handle the Enter key
+  - Enhanced name input field with better validation and error messages
+  - Fixed the fallback to "Anonymous" only when truly needed
+
 ## [1.1.1] - 2025-09-24
 
 ### Improved

@@ -20,7 +20,7 @@ export default function HighScoreModal({ onClose }: HighScoreModalProps) {
 
   // Initialize player name from context
   useEffect(() => {
-    setPlayerNameInput(playerName);
+    setPlayerNameInput(playerName || '');
   }, [playerName]);
 
   // Automatically focus on name input when high score is achieved
@@ -48,9 +48,13 @@ export default function HighScoreModal({ onClose }: HighScoreModalProps) {
 
   const handleSubmitScore = (e: React.FormEvent) => {
     e.preventDefault();
-    setPlayerName(playerNameInput);
-    saveHighScore();
-    setScoreSaved(true);
+    
+    // Ensure we have a non-empty name before saving
+    if (playerNameInput.trim()) {
+      setPlayerName(playerNameInput.trim());
+      saveHighScore();
+      setScoreSaved(true);
+    }
   };
 
   return (
@@ -107,6 +111,7 @@ export default function HighScoreModal({ onClose }: HighScoreModalProps) {
                   placeholder="Your name"
                   className="flex-1 border border-gray-300 rounded-l px-3 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-amber-500"
                   maxLength={15}
+                  minLength={1}
                   required
                 />
                 <button
@@ -116,6 +121,9 @@ export default function HighScoreModal({ onClose }: HighScoreModalProps) {
                   Save
                 </button>
               </div>
+              {playerNameInput.trim() === '' && (
+                <p className="text-red-600 text-sm mt-1">Please enter your name</p>
+              )}
             </form>
           </div>
         )}

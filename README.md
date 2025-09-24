@@ -20,6 +20,8 @@ A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and
 - **Top 10 Leaderboards**: Separate high score tables for each difficulty level
 - **Persistent Scores**: High scores saved to localStorage
 - **Player Names**: Enter your name when you achieve a high score with automatic input focus
+- **Name Validation**: Prevents empty submissions and provides clear feedback
+- **Keyboard Support**: Press Enter to submit your name for high scores
 - **Sorted Rankings**: Automatically sorts by fastest completion time
 - **Tabbed Interface**: Easy navigation between difficulty leaderboards
 - **Accessible Design**: High-contrast UI with proper color schemes for readability
@@ -248,6 +250,8 @@ The game includes multiple ways to interact on mobile devices:
 - **Separate Leaderboards**: Individual top 10 lists for Beginner, Intermediate, and Expert difficulties
 - **Persistent Storage**: High scores saved to localStorage
 - **Player Recognition**: Enter your name when achieving a high score with automatic input focus
+- **Name Validation**: Prevents empty submissions and provides clear feedback
+- **Keyboard Support**: Press Enter to submit your name for high scores
 - **Time-based Ranking**: Sorted by fastest completion time
 - **Date Tracking**: Records when each high score was achieved
 - **Accessible Design**: High-contrast colors and clear visual hierarchy for better readability
@@ -255,8 +259,9 @@ The game includes multiple ways to interact on mobile devices:
 ### How It Works
 1. Win a game to check if your time qualifies for the high score list
 2. If you achieve a high score, the input field automatically focuses for you to enter your name
-3. View the high score lists anytime by clicking the "High Scores" button
-4. Navigate between difficulty levels using the tabs in the high score modal
+3. Type your name and press Enter or click Save to submit your score
+4. View the high score lists anytime by clicking the "High Scores" button
+5. Navigate between difficulty levels using the tabs in the high score modal
 
 ## 🎯 Game Rules
 

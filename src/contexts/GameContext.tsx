@@ -136,7 +136,10 @@ export function GameProvider({
   }, []);
 
   const setPlayerName = useCallback((name: string) => {
-    dispatch({ type: 'SET_PLAYER_NAME', payload: { name } });
+    // Ensure we're setting a valid name
+    if (name && name.trim()) {
+      dispatch({ type: 'SET_PLAYER_NAME', payload: { name: name.trim() } });
+    }
   }, []);
 
   const saveHighScore = useCallback(() => {
@@ -146,7 +149,11 @@ export function GameProvider({
 
     const difficulty = state.game.getDifficulty().name.toUpperCase() as DifficultyKey;
     const time = state.game.getGameTime();
-    const playerName = state.playerName.trim() || 'Anonymous';
+    
+    // Only use 'Anonymous' if playerName is completely empty
+    const playerName = state.playerName && state.playerName.trim() 
+      ? state.playerName.trim() 
+      : 'Anonymous';
 
     const isHighScore = highScoreManager.addScore(playerName, time, difficulty);
     
