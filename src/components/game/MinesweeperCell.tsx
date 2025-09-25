@@ -232,7 +232,7 @@ export default function MinesweeperCell({
         // Prevent default touch behaviors like scrolling
         touchAction: 'manipulation'
       }}
-      data-cell-pos={`${cell.x},${cell.y}`}
+      data-cell-pos={`${cell.position.x},${cell.position.y}`}
     >
       {getCellContent()}
     </button>

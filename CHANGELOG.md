@@ -2,6 +2,13 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.6] - 2025-09-25
+
+### Fixed
+- **TypeScript Error**: Fixed TypeScript error related to cell position properties by correctly accessing `position.x` and `position.y`
+- **Cell Component**: Updated MinesweeperCell component to properly reference cell position properties
+- **Data Attributes**: Fixed data-cell-pos attribute to use the correct property path
+
 ## [1.1.5] - 2025-09-25
 
 ### Fixed
