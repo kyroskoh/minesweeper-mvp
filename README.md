@@ -302,6 +302,97 @@ The game includes intuitive ways to interact on mobile devices:
 - **Mobile Support**: iOS Safari 14+, Chrome Mobile 90+
 - **Features Used**: ES2017+, CSS Grid, localStorage, Context API
 
+## 🔒 Deployment & Proxy Configuration
+
+### Nginx Configuration
+
+When deploying behind an Nginx reverse proxy, add these settings to ensure proper handling of touch events and right-clicks:
+
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    # Application location
+    location / {
+        proxy_pass http://localhost:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Important headers for event handling
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        
+        # Allow WebSocket connections (important for Next.js)
+        proxy_set_header Connection "upgrade";
+        
+        # Increase timeouts for long-press detection
+        proxy_read_timeout 60s;
+        
+        # Disable buffering for better event handling
+        proxy_buffering off;
+        
+        # Allow all HTTP methods including OPTIONS (for CORS)
+        proxy_method "";
+    }
+    
+    # Additional recommended settings
+    client_max_body_size 10M;
+    
+    # Security headers
+    add_header X-Content-Type-Options nosniff;
+    add_header X-Frame-Options SAMEORIGIN;
+    add_header X-XSS-Protection "1; mode=block";
+}
+```
+
+### Apache Configuration
+
+If using Apache as a reverse proxy, add these settings to your virtual host:
+
+```apache
+<VirtualHost *:80>
+    ServerName your-domain.com
+    
+    ProxyPreserveHost On
+    ProxyPass / http://localhost:3001/
+    ProxyPassReverse / http://localhost:3001/
+    
+    # Important for event handling
+    RequestHeader set X-Forwarded-Proto "http"
+    RequestHeader set X-Forwarded-Port "80"
+    
+    # Increase timeout for long-press detection
+    ProxyTimeout 60
+    
+    # Security headers
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-XSS-Protection "1; mode=block"
+</VirtualHost>
+```
+
+### Docker with Traefik
+
+If using Traefik with Docker, add these labels to your service:
+
+```yaml
+services:
+  minesweeper:
+    # ... other configuration
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.minesweeper.rule=Host(`your-domain.com`)"
+      - "traefik.http.services.minesweeper.loadbalancer.server.port=3001"
+      - "traefik.http.middlewares.minesweeper-headers.headers.customResponseHeaders.X-Content-Type-Options=nosniff"
+      - "traefik.http.middlewares.minesweeper-headers.headers.customResponseHeaders.X-Frame-Options=SAMEORIGIN"
+      - "traefik.http.middlewares.minesweeper-headers.headers.customResponseHeaders.X-XSS-Protection=1; mode=block"
+      - "traefik.http.routers.minesweeper.middlewares=minesweeper-headers"
+```
+
 ## 🚧 Upcoming Features
 
 ### High Priority
@@ -358,6 +449,15 @@ npm run build
 - **Experimental features causing build failures**: The `optimizeCss` experimental feature has been disabled for stability
 - **TypeScript compilation errors**: Ensure all imports are correctly typed and files exist
 - **Docker build fails with "Cannot find module '@/...'"**: The `.dockerignore` file was excluding `tsconfig.json`, preventing TypeScript path mapping resolution in Docker builds. Fixed by allowing `tsconfig.json` in Docker context.
+
+### Proxy Issues
+
+If you're experiencing issues with right-click or long press functionality behind a reverse proxy:
+
+1. **Check Nginx/Apache Configuration**: Ensure your proxy configuration includes the headers mentioned in the Deployment section
+2. **Browser Console Errors**: Look for any JavaScript errors in your browser's developer console
+3. **Touch Events**: Some proxies might strip or modify certain headers needed for proper touch event handling
+4. **WebSocket Connection**: Ensure WebSocket connections are properly forwarded if using Next.js development server
 
 ### Docker Issues
 

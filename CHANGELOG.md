@@ -2,6 +2,13 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.5] - 2025-09-25
+
+### Fixed
+- **Nginx Compatibility**: Fixed issues with right-click and long press functionality when running behind Nginx reverse proxy
+- **Event Handling**: Improved event propagation to ensure consistent behavior across different hosting configurations
+- **Touch Events**: Enhanced touch event handling for better mobile experience through proxies
+
 ## [1.1.4] - 2025-09-25
 
 ### Fixed

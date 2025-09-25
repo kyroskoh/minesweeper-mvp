@@ -5,12 +5,13 @@
  * color-coded numbers, and 3D visual effects.
  * 
  * @author Kyros Koh
- * @version 1.0.0
+ * @version 1.1.5
  * @created 2025-09-23
+ * @updated 2025-09-25
  */
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { Cell, CellState } from '@/lib/minesweeper';
 
 interface MinesweeperCellProps {
@@ -38,6 +39,9 @@ export default function MinesweeperCell({
   // State for long press
   const [isLongPressing, setIsLongPressing] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const touchStartTime = useRef<number>(0);
+  const touchStartPos = useRef<{ x: number, y: number } | null>(null);
   
   // Classic Minesweeper number colors
   const getNumberColor = (neighborMines: number): string => {
@@ -69,11 +73,26 @@ export default function MinesweeperCell({
     return '';
   };
 
-  // Start long press timer
-  const handleTouchStart = useCallback(() => {
+  // Enhanced touch start handler
+  const handleTouchStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if (disabled || cell.state === CellState.REVEALED) return;
     
+    // Record start time and position for better detection
+    touchStartTime.current = Date.now();
+    
+    if ('touches' in e) {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+    } else {
+      touchStartPos.current = { x: (e as React.MouseEvent).clientX, y: (e as React.MouseEvent).clientY };
+    }
+    
     setIsLongPressing(true);
+    
+    // Clear any existing timer
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+    }
     
     longPressTimer.current = setTimeout(() => {
       // Execute flag toggle on long press
@@ -84,23 +103,54 @@ export default function MinesweeperCell({
     }, LONG_PRESS_DURATION);
   }, [disabled, cell.state, onFlagToggle]);
 
-  // Cancel long press timer if touch ends
-  const handleTouchEnd = useCallback(() => {
+  // Enhanced touch end handler
+  const handleTouchEnd = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
+    
+    touchStartPos.current = null;
     setIsLongPressing(false);
   }, []);
 
-  // Handle cell click - always reveal on left click
-  const handleClick = () => {
+  // Handle cell click with improved logic
+  const handleClick = (e: React.MouseEvent) => {
     // Don't process click if we're in the middle of a long press
     if (isLongPressing) return;
+    
+    // Detect right click more reliably
+    if (e.button === 2 || e.ctrlKey) {
+      e.preventDefault();
+      onRightClick(e);
+      return;
+    }
     
     // Normal click always reveals
     onClick();
   };
+
+  // Add global event listeners for more reliable right-click detection
+  useEffect(() => {
+    const button = buttonRef.current;
+    if (!button) return;
+
+    // Custom right-click handler for better proxy compatibility
+    const handleContextMenu = (e: MouseEvent) => {
+      e.preventDefault();
+      if (!disabled && button.contains(e.target as Node)) {
+        onRightClick(e as unknown as React.MouseEvent);
+      }
+    };
+
+    // Add the event listener to the button
+    button.addEventListener('contextmenu', handleContextMenu);
+
+    return () => {
+      // Clean up
+      button.removeEventListener('contextmenu', handleContextMenu);
+    };
+  }, [disabled, onRightClick]);
 
   // Get cell styling classes
   const getCellClasses = (): string => {
@@ -156,23 +206,33 @@ export default function MinesweeperCell({
 
   return (
     <button
+      ref={buttonRef}
       className={getCellClasses()}
       onClick={handleClick}
-      onContextMenu={onRightClick}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
-      onTouchCancel={handleTouchEnd}
-      onMouseDown={handleTouchStart}
-      onMouseUp={handleTouchEnd}
-      onMouseLeave={handleTouchEnd}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        onRightClick(e);
+      }}
+      onTouchStart={(e) => handleTouchStart(e)}
+      onTouchEnd={(e) => handleTouchEnd(e)}
+      onTouchCancel={(e) => handleTouchEnd(e)}
+      onMouseDown={(e) => handleTouchStart(e)}
+      onMouseUp={(e) => handleTouchEnd(e)}
+      onMouseLeave={(e) => handleTouchEnd(e)}
       disabled={disabled}
       title={cell.state !== CellState.REVEALED ? 'Right-click or long press to flag' : ''}
       style={{
         // Add subtle 3D effect for unrevealed cells
         boxShadow: cell.state === CellState.HIDDEN && !disabled
           ? 'inset 2px 2px 0px rgba(255,255,255,0.8), inset -2px -2px 0px rgba(0,0,0,0.3)'
-          : undefined
+          : undefined,
+        // Prevent text selection which can interfere with interactions
+        WebkitUserSelect: 'none',
+        userSelect: 'none',
+        // Prevent default touch behaviors like scrolling
+        touchAction: 'manipulation'
       }}
+      data-cell-pos={`${cell.x},${cell.y}`}
     >
       {getCellContent()}
     </button>
