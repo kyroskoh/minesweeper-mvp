@@ -2,6 +2,13 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.4] - 2025-09-25
+
+### Fixed
+- **Type Error**: Fixed TypeScript compilation error related to `isBombPlacementMode` property
+- **Game Board Component**: Refactored GameBoard component to use local state for flag mode
+- **Build Process**: Resolved build failure by removing references to non-existent properties
+
 ## [1.1.3] - 2025-09-25
 
 ### Changed

@@ -14,7 +14,7 @@ interface GameBoardProps {
 export default function GameBoard({ cellSize = 'md', className = '' }: GameBoardProps) {
   const { state, revealCell, toggleFlag, resumeGame } = useGame();
   const { isFinished, isLost } = useGameStats();
-  const { isBombPlacementMode } = state;
+  const [isFlagMode, setIsFlagMode] = useState(false);
   const [triggeredMine, setTriggeredMine] = useState<Position | null>(null);
 
   if (!state.gameState?.board || !state.gameState?.difficulty) {
@@ -37,7 +37,7 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
     }
     
     // Check if we're in flag placement mode
-    if (isBombPlacementMode) {
+    if (isFlagMode) {
       // In flag mode, clicking should toggle flags
       toggleFlag(x, y);
       return;
@@ -105,7 +105,6 @@ export default function GameBoard({ cellSize = 'md', className = '' }: GameBoard
               onFlagToggle={() => handleFlagToggle(x, y)}
               disabled={isFinished}
               size={cellSize}
-              isBombPlacementMode={isBombPlacementMode}
               isTriggeredMine={
                 isLost && 
                 triggeredMine !== null && 
