@@ -6,7 +6,6 @@ export interface GameContextState {
   currentTime: number;
   isLoading: boolean;
   error: string | null;
-  isBombPlacementMode: boolean;
   showHighScores: boolean;
   playerName: string;
   isNewHighScore: boolean;
@@ -24,7 +23,6 @@ export type GameAction =
   | { type: 'SET_ERROR'; payload: { error: string | null } }
   | { type: 'PAUSE_GAME' }
   | { type: 'RESUME_GAME' }
-  | { type: 'TOGGLE_BOMB_PLACEMENT_MODE' }
   | { type: 'TOGGLE_HIGH_SCORES' }
   | { type: 'SET_PLAYER_NAME'; payload: { name: string } }
   | { type: 'SAVE_HIGH_SCORE'; payload: { difficulty: DifficultyKey; time: number } }
@@ -41,7 +39,6 @@ export interface GameContextValue {
   resetGame: (difficulty?: Difficulty, seed?: number) => void;
   pauseGame: () => void;
   resumeGame: () => void;
-  toggleBombPlacementMode: () => void;
   
   // Getters
   getFormattedTime: () => string;

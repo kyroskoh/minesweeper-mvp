@@ -8,7 +8,7 @@ A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and
 
 ### 🎮 Core Gameplay
 - **Classic Minesweeper Mechanics**: Left-click to reveal, right-click to flag
-- **Mobile-Friendly Controls**: "Place Flags" toggle button for smartphones/tablets
+- **Mobile-Friendly Controls**: Long press to flag on smartphones/tablets
 - **Long Press to Flag**: Hold down on a cell to quickly place a flag (mobile & desktop)
 - **Three Difficulty Levels**: Beginner (9×9, 10 mines), Intermediate (16×16, 40 mines), Expert (30×16, 99 mines)
 - **Smart Mine Placement**: Uses seeded random generation for consistent testing
@@ -36,16 +36,16 @@ A modern, fully-featured Minesweeper game built with Next.js 15, TypeScript, and
 - **Classic Color Scheme**: Traditional Minesweeper number colors (1=Blue, 2=Green, 3=Red, etc.)
 - **3D Cell Effects**: Realistic button appearance with inset shadows
 - **Responsive Design**: Works on desktop and mobile devices
-- **Mobile Touch Controls**: Dedicated bomb placement mode with visual indicators
+- **Intuitive Controls**: Right-click on desktop, long-press on mobile for flagging
 - **Real-time Updates**: Live mine counter and timer display
-- **Visual Feedback**: Hover effects, smooth transitions, and mode-specific styling
+- **Visual Feedback**: Hover effects, smooth transitions, and visual indicators during long press
 
 ### 💾 State Management
 - **Auto-save**: Game automatically saves to localStorage
 - **Resume Functionality**: Pick up exactly where you left off
 - **Difficulty Persistence**: Remembers your preferred difficulty level
 - **Context-based Architecture**: Clean separation of game logic and UI
-- **Mobile State Tracking**: Persistent bomb placement mode for touch devices
+- **Simplified State**: Streamlined state management for better performance
 
 ## 🚀 Getting Started
 
@@ -202,9 +202,8 @@ src/
 - **Persistence**: Automatic localStorage integration with error handling
 
 #### UI Components (`src/components/`)
-- **MinesweeperCell**: Enhanced cell component with classic styling and mobile mode support
+- **MinesweeperCell**: Enhanced cell component with classic styling and long-press support
 - **GameBoard**: Responsive game board with proper event handling
-- **PlaceFlagButton**: Mobile-friendly toggle button with accessibility features
 - **HighScoreModal**: Tabbed interface for viewing high scores by difficulty with accessible design
 - **HighScoreButton**: Button to access the high score leaderboard
 - **Demo Components**: Full-featured game interface with responsive mobile controls
@@ -229,20 +228,19 @@ npm test GameContext        # React context tests
 ## 📱 Mobile Controls
 
 ### Touch-Friendly Interface
-The game includes multiple ways to interact on mobile devices:
+The game includes intuitive ways to interact on mobile devices:
 
-- **Reveal Mode** (🔍): Default mode - tap cells to reveal them
-- **Place Flags Mode** (🚩): Toggle mode - tap cells to flag/unflag them
-- **Long Press**: Hold down on any cell for 500ms to place a flag, regardless of mode
-- **Visual Indicators**: Cells show orange ring highlights in flag placement mode
+- **Tap**: Simply tap cells to reveal them (normal gameplay)
+- **Long Press**: Hold down on any cell for 500ms to place or remove a flag
+- **Visual Indicators**: Cells show orange ring highlights during long press
 - **Responsive Design**: Button size and position optimized for different screen sizes
 
 ### Mobile Usage
-1. **Tap the toggle button** to switch between reveal and flag placement modes
-2. **In Reveal Mode**: Tap cells to reveal them (normal gameplay)
-3. **In Flag Placement Mode**: Tap cells to place/remove flags
-4. **Long Press**: Hold on any cell to quickly place a flag without switching modes
-5. **Visual Feedback**: Active mode is clearly indicated with colors and icons
+1. **Tap** cells to reveal them (normal gameplay)
+2. **Long press** on any cell to place or remove a flag
+3. **Visual Feedback**: Orange highlight appears during long press
+4. **Numbers** show how many mines are adjacent to that cell
+5. **Flag all mines** without revealing them to win
 
 ## 🏆 High Score System
 
@@ -266,9 +264,9 @@ The game includes multiple ways to interact on mobile devices:
 ## 🎯 Game Rules
 
 ### How to Play
-1. **Left-click** any cell to reveal it (or tap in reveal mode on mobile)
-2. **Right-click** to flag/unflag suspected mines (or use flag placement mode on mobile)
-3. **Long press** on any cell to quickly place a flag (mobile & desktop)
+1. **Left-click** any cell to reveal it (or tap on mobile)
+2. **Right-click** to flag/unflag suspected mines on desktop
+3. **Long press** on any cell to flag/unflag (works on mobile and desktop)
 4. **Numbers** show how many mines are adjacent to that cell
 5. **Objective**: Reveal all non-mine cells without clicking on any mines
 6. **Timer** starts on your first move and automatically resumes if paused
@@ -307,7 +305,7 @@ The game includes multiple ways to interact on mobile devices:
 ## 🚧 Upcoming Features
 
 ### High Priority
-- [x] **Mobile Controls**: Touch-friendly bomb placement toggle (COMPLETED)
+- [x] **Mobile Controls**: Long press to flag on mobile (COMPLETED)
 - [x] **High Score System**: Top 10 high scores for each difficulty level (COMPLETED)
 - [x] **Long Press to Flag**: Hold down on cells to quickly place flags (COMPLETED)
 - [x] **Triggered Mine Highlight**: Show which mine caused the game to end (COMPLETED)

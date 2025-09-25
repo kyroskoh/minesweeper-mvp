@@ -7,7 +7,6 @@ export const initialGameState: GameContextState = {
   currentTime: 0,
   isLoading: false,
   error: null,
-  isBombPlacementMode: false,
   showHighScores: false,
   playerName: '',
   isNewHighScore: false,
@@ -29,7 +28,6 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           error: null,
           isLoading: false,
           isNewHighScore: false,
-          // Preserve isBombPlacementMode during game initialization
         };
       } catch (error) {
         return {
@@ -109,7 +107,6 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           currentTime: 0,
           error: null,
           isNewHighScore: false,
-          // Preserve isBombPlacementMode during game reset
         };
       }
 
@@ -125,7 +122,6 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           currentTime: 0,
           error: null,
           isNewHighScore: false,
-          // Preserve isBombPlacementMode during game reset
         };
       } catch (error) {
         return {
@@ -157,7 +153,6 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           error: null,
           isLoading: false,
           isNewHighScore: false,
-          // Preserve isBombPlacementMode when loading saved game
         };
       } catch (error) {
         return {
@@ -232,13 +227,6 @@ export function gameReducer(state: GameContextState, action: GameAction): GameCo
           error: error instanceof Error ? error.message : 'Failed to resume game',
         };
       }
-    }
-
-    case 'TOGGLE_BOMB_PLACEMENT_MODE': {
-      return {
-        ...state,
-        isBombPlacementMode: !state.isBombPlacementMode,
-      };
     }
 
     case 'TOGGLE_HIGH_SCORES': {

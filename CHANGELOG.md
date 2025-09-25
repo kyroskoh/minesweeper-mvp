@@ -2,6 +2,21 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.3] - 2025-09-25
+
+### Changed
+- **Simplified Flag Controls**
+  - Removed the problematic "Place Flags" toggle button functionality
+  - Streamlined controls to focus on right-click for desktop users
+  - Enhanced long-press functionality for both mobile and desktop users
+  - Updated instructions to clarify the flag placement methods
+  - Simplified codebase by removing bomb placement mode state and related code
+
+### Fixed
+- **Mobile Controls**: Fixed inconsistent flag placement behavior by standardizing on long-press
+- **User Interface**: Removed potentially confusing toggle button that wasn't working correctly
+- **Game Logic**: Simplified interaction model for better user experience across all devices
+
 ## [1.1.2] - 2025-09-24
 
 ### Fixed

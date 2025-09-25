@@ -15,7 +15,6 @@ import { useGame } from '@/contexts/GameContext';
 import { useTimer, useGameStats } from '@/hooks';
 import { DIFFICULTIES } from '@/lib/minesweeper';
 import GameBoard from '../game/GameBoard';
-import ClientOnlyPlaceFlagButton from '../game/ClientOnlyPlaceFlagButton';
 import HighScoreButton from '../game/HighScoreButton';
 import HighScoreModal from '../game/HighScoreModal';
 import ColorReference from './ColorReference';
@@ -25,7 +24,6 @@ export default function GameDemo() {
     state,
     resetGame,
     changeDifficulty,
-    toggleBombPlacementMode,
     toggleHighScores,
   } = useGame();
 
@@ -132,30 +130,10 @@ export default function GameDemo() {
         </div>
       </div>
 
-      {/* Mobile-Friendly Flag Placement Button */}
-      <div className="flex justify-center mb-4 md:hidden">
-        <ClientOnlyPlaceFlagButton 
-          isBombPlacementMode={state.isBombPlacementMode}
-          onToggle={toggleBombPlacementMode}
-          disabled={isFinished}
-          size="md"
-        />
-      </div>
-
       {/* Game Board */}
       <div className="flex justify-center mb-6">
         <div className="flex flex-col items-center gap-4">
           <GameBoard cellSize="md" />
-          
-          {/* Desktop Flag Placement Button - shown below board */}
-          <div className="hidden md:block">
-            <ClientOnlyPlaceFlagButton 
-              isBombPlacementMode={state.isBombPlacementMode}
-              onToggle={toggleBombPlacementMode}
-              disabled={isFinished}
-              size="sm"
-            />
-          </div>
         </div>
       </div>
 
@@ -178,8 +156,8 @@ export default function GameDemo() {
         <h3 className="font-semibold text-gray-800 mb-2">How to Play:</h3>
         <ul className="text-sm text-gray-600 space-y-1">
           <li>• <strong>Left click</strong> to reveal a cell</li>
-          <li>• <strong>Right click</strong> to flag/unflag a cell</li>
-          <li>• On mobile: Use the <strong>"Place Flags"</strong> button to switch modes</li>
+          <li>• <strong>Right click</strong> to flag/unflag a cell on desktop</li>
+          <li>• <strong>Long press</strong> to flag/unflag a cell (works on mobile and desktop)</li>
           <li>• Numbers show how many mines are adjacent to that cell</li>
           <li>• Flag all mines without revealing them to win!</li>
           <li>• Timer starts on your first move</li>
