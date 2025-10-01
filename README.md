@@ -228,19 +228,25 @@ npm test GameContext        # React context tests
 ## 📱 Mobile Controls
 
 ### Touch-Friendly Interface
-The game includes intuitive ways to interact on mobile devices:
+The game includes intuitive ways to interact on mobile devices with enhanced proxy compatibility:
 
 - **Tap**: Simply tap cells to reveal them (normal gameplay)
 - **Long Press**: Hold down on any cell for 500ms to place or remove a flag
 - **Visual Indicators**: Cells show orange ring highlights during long press
+- **Haptic Feedback**: Vibration feedback when flag is placed (if supported)
+- **Movement Tolerance**: 10px movement threshold prevents accidental cancellation
+- **Proxy Optimization**: Works reliably behind nginx reverse proxies
 - **Responsive Design**: Button size and position optimized for different screen sizes
 
-### Mobile Usage
+### Enhanced Mobile Experience
 1. **Tap** cells to reveal them (normal gameplay)
-2. **Long press** on any cell to place or remove a flag
-3. **Visual Feedback**: Orange highlight appears during long press
-4. **Numbers** show how many mines are adjacent to that cell
-5. **Flag all mines** without revealing them to win
+2. **Long press** on any cell to place or remove a flag  
+3. **Visual Feedback**: Orange highlight appears during long press with precise timing
+4. **Haptic Feedback**: Feel vibration when flag is placed (modern browsers)
+5. **Movement Detection**: Long press cancels if finger moves more than 10 pixels
+6. **Proxy Resilient**: Dual timing mechanism ensures 500ms consistency
+7. **Numbers** show how many mines are adjacent to that cell
+8. **Flag all mines** without revealing them to win
 
 ## 🏆 High Score System
 
@@ -265,11 +271,12 @@ The game includes intuitive ways to interact on mobile devices:
 
 ### How to Play
 1. **Left-click** any cell to reveal it (or tap on mobile)
-2. **Right-click** to flag/unflag suspected mines on desktop
+2. **Right-click** to flag/unflag suspected mines on desktop (Ctrl+Click on Mac)
 3. **Long press** on any cell to flag/unflag (works on mobile and desktop)
-4. **Numbers** show how many mines are adjacent to that cell
-5. **Objective**: Reveal all non-mine cells without clicking on any mines
-6. **Timer** starts on your first move and automatically resumes if paused
+4. **Enhanced Controls**: Improved event handling prevents accidental reveals
+5. **Numbers** show how many mines are adjacent to that cell
+6. **Objective**: Reveal all non-mine cells without clicking on any mines
+7. **Timer** starts on your first move and automatically resumes if paused
 
 ### Number Color System
 - **1**: Blue - Easiest to spot, usually safe areas
@@ -306,7 +313,7 @@ The game includes intuitive ways to interact on mobile devices:
 
 ### Nginx Configuration
 
-When deploying behind an Nginx reverse proxy, add these settings to ensure proper handling of touch events and right-clicks:
+When deploying behind an Nginx reverse proxy, use these optimized settings to ensure proper handling of touch events, long press detection, and right-clicks. **A complete example configuration is available in `nginx-example.conf`**.
 
 ```nginx
 server {
@@ -329,14 +336,18 @@ server {
         # Allow WebSocket connections (important for Next.js)
         proxy_set_header Connection "upgrade";
         
-        # Increase timeouts for long-press detection
-        proxy_read_timeout 60s;
-        
-        # Disable buffering for better event handling
-        proxy_buffering off;
+        # Critical settings for touch event timing (REQUIRED)
+        proxy_buffering off;                    # Disable buffering for real-time events
+        proxy_request_buffering off;            # Don't buffer incoming requests
+        proxy_read_timeout 60s;                 # Allow time for long press detection
+        proxy_send_timeout 60s;                 # Prevent timeout during interactions
         
         # Allow all HTTP methods including OPTIONS (for CORS)
         proxy_method "";
+        
+        # Optimize for low-latency interactive applications
+        tcp_nodelay on;
+        tcp_nopush off;
     }
     
     # Additional recommended settings
@@ -396,10 +407,13 @@ services:
 ## 🚧 Upcoming Features
 
 ### High Priority
-- [x] **Mobile Controls**: Long press to flag on mobile (COMPLETED)
-- [x] **High Score System**: Top 10 high scores for each difficulty level (COMPLETED)
-- [x] **Long Press to Flag**: Hold down on cells to quickly place flags (COMPLETED)
-- [x] **Triggered Mine Highlight**: Show which mine caused the game to end (COMPLETED)
+- [x] **Mobile Controls**: Long press to flag on mobile (COMPLETED v1.1.0)
+- [x] **High Score System**: Top 10 high scores for each difficulty level (COMPLETED v1.1.0)
+- [x] **Long Press to Flag**: Hold down on cells to quickly place flags (COMPLETED v1.1.0)
+- [x] **Triggered Mine Highlight**: Show which mine caused the game to end (COMPLETED v1.1.0)
+- [x] **Right-Click Enhancement**: Fixed event handling and proxy compatibility (COMPLETED v1.1.8)
+- [x] **Proxy Compatibility**: Enhanced nginx reverse proxy support (COMPLETED v1.1.8)
+- [x] **Mobile Experience**: Haptic feedback and improved touch handling (COMPLETED v1.1.8)
 - [ ] **API Routes**: RESTful endpoints for score management
 - [ ] **Database Migration**: Scripts for localStorage → SQLite → SQL/NoSQL
 
@@ -431,7 +445,22 @@ services:
 - **ESLint**: Follow the existing configuration
 - **Commits**: Use conventional commit messages
 
-## 🚑 Troubleshooting
+## 🐭 Troubleshooting
+
+### Proxy Environment Issues
+
+**Long press not working behind reverse proxy?**
+
+1. **Check nginx configuration**: Ensure `proxy_buffering off` and `proxy_request_buffering off` are set
+2. **Verify timeout settings**: Use `proxy_read_timeout 60s` to allow for long press detection
+3. **Use the provided config**: Copy settings from `nginx-example.conf`
+4. **Test locally first**: Confirm functionality works on `localhost:3001` before deploying
+
+**Right-click not working properly?**
+
+1. **Browser compatibility**: Some browsers may require Ctrl+Click instead of right-click
+2. **Event interference**: Check for browser extensions that might block context menus
+3. **Mobile devices**: Use long press instead of attempting right-click
 
 ### Build Issues
 
@@ -448,6 +477,7 @@ npm run build
 - **"Cannot find module 'critters'"**: Fixed by installing the `critters` dependency
 - **Experimental features causing build failures**: The `optimizeCss` experimental feature has been disabled for stability
 - **TypeScript compilation errors**: Ensure all imports are correctly typed and files exist
+- **Touch events not working**: Verify modern browser support for touch APIs
 - **Docker build fails with "Cannot find module '@/...'"**: The `.dockerignore` file was excluding `tsconfig.json`, preventing TypeScript path mapping resolution in Docker builds. Fixed by allowing `tsconfig.json` in Docker context.
 
 ### Proxy Issues

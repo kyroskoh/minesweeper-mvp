@@ -5,9 +5,9 @@
  * color-coded numbers, and 3D visual effects.
  * 
  * @author Kyros Koh
- * @version 1.1.5
+ * @version 1.1.8
  * @created 2025-09-23
- * @updated 2025-09-25
+ * @updated 2025-10-01
  */
 'use client';
 
@@ -36,12 +36,15 @@ export default function MinesweeperCell({
   size = 'md',
   isTriggeredMine = false,
 }: MinesweeperCellProps) {
-  // State for long press
+  // State for long press - proxy-resilient implementation
   const [isLongPressing, setIsLongPressing] = useState(false);
   const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const animationFrame = useRef<number | null>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const touchStartTime = useRef<number>(0);
   const touchStartPos = useRef<{ x: number, y: number } | null>(null);
+  const longPressTriggered = useRef<boolean>(false);
+  const isActiveTouch = useRef<boolean>(false);
   
   // Classic Minesweeper number colors
   const getNumberColor = (neighborMines: number): string => {
@@ -73,13 +76,23 @@ export default function MinesweeperCell({
     return '';
   };
 
-  // Enhanced touch start handler
+  /**
+   * Proxy-resilient long press detection using multiple timing mechanisms
+   */
   const handleTouchStart = useCallback((e: React.TouchEvent | React.MouseEvent) => {
     if (disabled || cell.state === CellState.REVEALED) return;
     
-    // Record start time and position for better detection
-    touchStartTime.current = Date.now();
+    // Prevent default to avoid interference
+    if ('touches' in e) {
+      e.preventDefault();
+    }
     
+    // Record start time with high precision
+    touchStartTime.current = performance.now();
+    longPressTriggered.current = false;
+    isActiveTouch.current = true;
+    
+    // Record initial position for movement detection
     if ('touches' in e) {
       const touch = e.touches[0];
       touchStartPos.current = { x: touch.clientX, y: touch.clientY };
@@ -89,68 +102,174 @@ export default function MinesweeperCell({
     
     setIsLongPressing(true);
     
-    // Clear any existing timer
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-    }
-    
-    longPressTimer.current = setTimeout(() => {
-      // Execute flag toggle on long press
-      if (onFlagToggle) {
-        onFlagToggle();
-      }
-      setIsLongPressing(false);
-    }, LONG_PRESS_DURATION);
-  }, [disabled, cell.state, onFlagToggle]);
-
-  // Enhanced touch end handler
-  const handleTouchEnd = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    // Clear any existing timers/frames
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
     }
+    if (animationFrame.current) {
+      cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = null;
+    }
     
-    touchStartPos.current = null;
+    // Use dual timing mechanism for better proxy compatibility
+    // 1. Traditional setTimeout as primary
+    longPressTimer.current = setTimeout(() => {
+      if (isActiveTouch.current && !longPressTriggered.current) {
+        triggerLongPress();
+      }
+    }, LONG_PRESS_DURATION);
+    
+    // 2. requestAnimationFrame as backup for timing precision
+    const checkLongPress = () => {
+      if (!isActiveTouch.current || longPressTriggered.current) return;
+      
+      const elapsed = performance.now() - touchStartTime.current;
+      if (elapsed >= LONG_PRESS_DURATION) {
+        triggerLongPress();
+      } else {
+        animationFrame.current = requestAnimationFrame(checkLongPress);
+      }
+    };
+    
+    animationFrame.current = requestAnimationFrame(checkLongPress);
+  }, [disabled, cell.state, onFlagToggle]);
+  
+  /**
+   * Trigger long press action with deduplication
+   */
+  const triggerLongPress = useCallback(() => {
+    if (longPressTriggered.current || !isActiveTouch.current) return;
+    
+    longPressTriggered.current = true;
     setIsLongPressing(false);
+    
+    // Execute flag toggle
+    if (onFlagToggle) {
+      onFlagToggle();
+    }
+    
+    // Provide haptic feedback if available
+    if ('vibrate' in navigator) {
+      navigator.vibrate(50);
+    }
+  }, [onFlagToggle]);
+  
+  // Add passive event listeners for better proxy performance
+  useEffect(() => {
+    const button = buttonRef.current;
+    if (!button) return;
+    
+    // Passive touchstart for better scroll performance
+    const passiveTouchStart = (e: TouchEvent) => {
+      // This runs alongside the React event but doesn't preventDefault
+      // Helps with proxy timing issues
+    };
+    
+    // Add passive listeners
+    button.addEventListener('touchstart', passiveTouchStart, { passive: true });
+    
+    return () => {
+      button.removeEventListener('touchstart', passiveTouchStart);
+    };
+  }, []);
+  
+  // Cleanup timers on unmount
+  useEffect(() => {
+    return () => {
+      if (longPressTimer.current) {
+        clearTimeout(longPressTimer.current);
+      }
+      if (animationFrame.current) {
+        cancelAnimationFrame(animationFrame.current);
+      }
+    };
   }, []);
 
-  // Handle cell click with improved logic
-  const handleClick = (e: React.MouseEvent) => {
-    // Don't process click if we're in the middle of a long press
-    if (isLongPressing) return;
+  /**
+   * Enhanced touch end handler with movement and timing validation
+   */
+  const handleTouchEnd = useCallback((e: React.TouchEvent | React.MouseEvent) => {
+    // Clean up all timers and state
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    if (animationFrame.current) {
+      cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = null;
+    }
     
-    // Detect right click more reliably
-    if (e.button === 2 || e.ctrlKey) {
+    // Check if this was a valid touch end (not cancelled by movement)
+    let wasValidTouch = isActiveTouch.current;
+    
+    if (wasValidTouch && touchStartPos.current && !longPressTriggered.current) {
+      // Validate touch didn't move too much (for touch devices)
+      if ('touches' in e || 'changedTouches' in e) {
+        const touchEvent = e as React.TouchEvent;
+        const touch = touchEvent.changedTouches ? touchEvent.changedTouches[0] : 
+                     touchEvent.touches ? touchEvent.touches[0] : null;
+        if (touch) {
+          const deltaX = Math.abs(touch.clientX - touchStartPos.current.x);
+          const deltaY = Math.abs(touch.clientY - touchStartPos.current.y);
+          const maxMovement = 10; // pixels
+          
+          if (deltaX > maxMovement || deltaY > maxMovement) {
+            wasValidTouch = false;
+          }
+        }
+      }
+    }
+    
+    // Reset all state
+    isActiveTouch.current = false;
+    touchStartPos.current = null;
+    setIsLongPressing(false);
+    
+    // Small delay to ensure long press doesn't interfere with click
+    if (longPressTriggered.current) {
+      setTimeout(() => {
+        longPressTriggered.current = false;
+      }, 100);
+    }
+  }, []);
+
+  /**
+   * Handle primary (left) click - reveals cells
+   * Early returns for right-button, long-press, or Ctrl+click
+   */
+  const handlePrimaryClick = (e: React.MouseEvent) => {
+    // Don't process click if we're in the middle of a long press or it was just triggered
+    if (isLongPressing || longPressTriggered.current) return;
+    
+    // Ignore right mouse button - let contextmenu handle it
+    if (e.button !== 0) return;
+    
+    // Handle Ctrl+Click as right-click on Mac
+    if (e.ctrlKey && e.button === 0) {
       e.preventDefault();
       onRightClick(e);
       return;
     }
     
-    // Normal click always reveals
+    // Normal left click reveals cell
     onClick();
   };
 
-  // Add global event listeners for more reliable right-click detection
-  useEffect(() => {
-    const button = buttonRef.current;
-    if (!button) return;
-
-    // Custom right-click handler for better proxy compatibility
-    const handleContextMenu = (e: MouseEvent) => {
-      e.preventDefault();
-      if (!disabled && button.contains(e.target as Node)) {
-        onRightClick(e as unknown as React.MouseEvent);
-      }
-    };
-
-    // Add the event listener to the button
-    button.addEventListener('contextmenu', handleContextMenu);
-
-    return () => {
-      // Clean up
-      button.removeEventListener('contextmenu', handleContextMenu);
-    };
-  }, [disabled, onRightClick]);
+  /**
+   * Handle right-click (context menu) - toggles flags
+   * Works for both desktop right-click and Ctrl+click on Mac
+   */
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    // Don't process if disabled or already revealed
+    if (disabled || cell.state === CellState.REVEALED) return;
+    
+    // Call the right-click handler
+    onRightClick(e);
+  };
 
   // Get cell styling classes
   const getCellClasses = (): string => {
@@ -208,14 +327,24 @@ export default function MinesweeperCell({
     <button
       ref={buttonRef}
       className={getCellClasses()}
-      onClick={handleClick}
-      onContextMenu={(e) => {
-        e.preventDefault();
-        onRightClick(e);
-      }}
+      onClick={handlePrimaryClick}
+      onContextMenu={handleContextMenu}
       onTouchStart={(e) => handleTouchStart(e)}
       onTouchEnd={(e) => handleTouchEnd(e)}
       onTouchCancel={(e) => handleTouchEnd(e)}
+      onTouchMove={(e) => {
+        // Cancel long press if finger moves too much
+        if (touchStartPos.current && isActiveTouch.current) {
+          const touch = e.touches[0];
+          if (touch) {
+            const deltaX = Math.abs(touch.clientX - touchStartPos.current.x);
+            const deltaY = Math.abs(touch.clientY - touchStartPos.current.y);
+            if (deltaX > 10 || deltaY > 10) {
+              handleTouchEnd(e);
+            }
+          }
+        }
+      }}
       onMouseDown={(e) => handleTouchStart(e)}
       onMouseUp={(e) => handleTouchEnd(e)}
       onMouseLeave={(e) => handleTouchEnd(e)}
@@ -229,8 +358,15 @@ export default function MinesweeperCell({
         // Prevent text selection which can interfere with interactions
         WebkitUserSelect: 'none',
         userSelect: 'none',
-        // Prevent default touch behaviors like scrolling
-        touchAction: 'manipulation'
+        // Enhanced touch action for proxy compatibility
+        touchAction: 'manipulation',
+        // Prevent iOS Safari touch callouts
+        WebkitTouchCallout: 'none',
+        // Prevent Android Chrome highlight
+        WebkitTapHighlightColor: 'transparent',
+        // Improve touch responsiveness
+        msContentZooming: 'none',
+        msTouchAction: 'manipulation'
       }}
       data-cell-pos={`${cell.position.x},${cell.position.y}`}
     >

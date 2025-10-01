@@ -196,7 +196,7 @@ export default function GameDemo() {
           </a>
         </p>
         <p className="text-xs text-gray-400 mt-1">
-          Minesweeper MVP v1.0.0 • Built with Next.js, TypeScript & Tailwind CSS
+          Minesweeper MVP v1.1.8 • Built with Next.js, TypeScript & Tailwind CSS
         </p>
       </div>
     </div>

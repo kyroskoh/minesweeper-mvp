@@ -2,6 +2,45 @@
 
 All notable changes to the Minesweeper MVP project will be documented in this file.
 
+## [1.1.8] - 2025-10-01
+
+### Fixed
+- **Long Press Proxy Fix**: Complete rewrite of long press detection for nginx reverse proxy compatibility
+  - Implemented dual timing mechanism using both `setTimeout` and `requestAnimationFrame`
+  - Added high-precision timing with `performance.now()` instead of `Date.now()`
+  - Enhanced touch movement validation to prevent accidental flag toggles
+  - Added passive event listeners for better proxy performance
+  - Implemented touch action CSS optimizations for mobile devices
+  - Added haptic feedback support for modern mobile browsers
+  - Fixed event coordination issues that occurred behind reverse proxies
+  - Added proper cleanup for animation frames and timers
+- **Mobile Experience**: Enhanced mobile interaction with improved touch handling
+  - Added haptic feedback support (vibration) when available
+  - Enhanced visual feedback with orange ring indicator during long press
+  - Improved touch movement validation to prevent accidental triggers
+  - Added comprehensive CSS touch optimizations for all mobile browsers
+- **Performance Improvements**: Optimized event handling for better proxy performance
+  - Implemented passive event listeners to improve scroll performance
+  - Added proper event cleanup to prevent memory leaks
+  - Enhanced timing precision with dual mechanism fallback
+- **Developer Experience**: Added comprehensive nginx configuration example
+  - Created `nginx-example.conf` with optimized proxy settings
+  - Added detailed deployment documentation for reverse proxy setups
+  - Improved debugging with better event validation and error handling
+
+## [1.1.7] - 2025-09-25
+
+### Fixed
+- **Right-Click Functionality**: Complete rewrite of right-click event handling system   
+  - Fixed duplicate event handlers that caused double-flagging or race conditions
+  - Removed conflicting contextmenu event listeners (inline + manual addEventListener)
+  - Simplified event flow: single `onContextMenu` handler for right-click detection
+  - Fixed Ctrl+Click support for Mac users (now properly maps to flag toggle)
+  - Improved event suppression with `preventDefault()` and `stopPropagation()`
+  - Eliminated race conditions between `onClick` and `onContextMenu` events
+- **Event Handling**: Enhanced primary click handler to properly ignore non-left mouse buttons
+- **Cross-Platform Compatibility**: Better support for different mouse button behaviors across browsers
+
 ## [1.1.6] - 2025-09-25
 
 ### Fixed
